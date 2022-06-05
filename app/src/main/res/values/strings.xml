@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">NeRecipe</string>
+    <string name="item_recipes_list_string">Recipes</string>
+    <string name="item_favourites_list_string">Favourites</string>
+    <string name="item_filter_string">Filter</string>
+    <string name="recipes_filter_edit_hint_string">Enter recipe name for search</string>
+    <string name="text_recipe_name">Recipe name #1</string>
+    <string name="text_author_name">Author name</string>
+    <string name="text_kitchen_label">Kitchen:</string>
+    <string name="text_category">Name of the kitchen / category</string>
+    <string name="item_edit_more">Edit</string>
+    <string name="item_remove_more">Remove</string>
+    <string name="recipe_name_hint_string">Name of a recipe here</string>
+    <string name="author_name_hint_string">Author name here</string>
+</resources>
