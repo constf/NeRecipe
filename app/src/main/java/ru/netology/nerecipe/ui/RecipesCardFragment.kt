@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -20,6 +21,15 @@ class RecipesCardFragment : Fragment() {
     private val binding get() = _binding
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
+            requireActivity().setTitle("NeRecipe")
+            parentFragmentManager.popBackStack()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,6 +41,8 @@ class RecipesCardFragment : Fragment() {
         _binding = FragmentRecipeCardBinding.inflate(inflater, container, false)
 
         val adapter: StepsAdapter = StepsAdapter(viewModel, StepsAdapter.SHOW_ADAPTER)
+
+        requireActivity().setTitle(" Recipe: " + recipe.name)
 
         binding?.recipeName?.text = recipe.name
         binding?.authorName?.text = recipe.author

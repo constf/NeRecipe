@@ -13,13 +13,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.FragmentRecipeNewBinding
-import ru.netology.nerecipe.databinding.StepDetailsBinding
+import ru.netology.nerecipe.databinding.StepDetailsEditBinding
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 class StepNewFragment: Fragment() {
 
     private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
-    private var _binding: StepDetailsBinding? = null
+    private var _binding: StepDetailsEditBinding? = null
     private val binding get() = _binding!!
 
 
@@ -36,7 +36,7 @@ class StepNewFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = StepDetailsBinding.inflate(inflater, container, false)
+        _binding = StepDetailsEditBinding.inflate(inflater, container, false)
         activity?.actionBar?.title = "New Step"
 
         val step = viewModel.getEditedStep()
@@ -57,8 +57,8 @@ class StepNewFragment: Fragment() {
                 viewModel.onChoosePictureClicked(step)
             }
 
-            viewModel.chooseThePicture.observe(viewLifecycleOwner) {
-                if (step == null) return@observe
+            viewModel.chooseThePicture.observe(viewLifecycleOwner) { stepForPicture ->
+                if (stepForPicture == null) return@observe
                 val intent = Intent().apply {
                     action = Intent.ACTION_PICK
                     type = "image/*"
@@ -93,6 +93,12 @@ class StepNewFragment: Fragment() {
                 parentFragmentManager.popBackStack()
                 true
             }
+
+            R.id.recipe_new_options_discard -> {
+                parentFragmentManager.popBackStack()
+                true
+            }
+
             else -> return super.onOptionsItemSelected(item)
         }
 

@@ -2,6 +2,7 @@ package ru.netology.nerecipe.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate.FEATURE_SUPPORT_ACTION_BAR
 import androidx.fragment.app.commit
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.ActivityMainBinding

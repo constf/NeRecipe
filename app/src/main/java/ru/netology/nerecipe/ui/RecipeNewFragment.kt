@@ -38,8 +38,14 @@ class RecipeNewFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
-            // if (viewModel.isNewRecipe && recipeEdited != null) viewModel.deleteRecipe(recipeEdited!!)
+            if (viewModel.isNewRecipe)
+                requireActivity().setTitle("NeRecipe")
+            else
+                requireActivity().setTitle(" Recipe: " + recipeEdited?.name)
+
+            parentFragmentManager.popBackStack()
         }
     }
 
@@ -67,10 +73,23 @@ class RecipeNewFragment :
 
                     viewModel.onSaveEditedRecipe(recipe)
                 }
+                if (viewModel.isNewRecipe)
+                    requireActivity().setTitle("NeRecipe")
+                else
+                    requireActivity().setTitle(" Recipe: " + recipeEdited?.name)
                 parentFragmentManager.popBackStack()
-                // if (recipeEdited?.id != NEW_ITEM_ID) parentFragmentManager.popBackStack()
                 true
             }
+
+            R.id.recipe_new_options_discard -> {
+                if (viewModel.isNewRecipe)
+                    requireActivity().setTitle("NeRecipe")
+                else
+                    requireActivity().setTitle(" Recipe: " + recipeEdited?.name)
+                parentFragmentManager.popBackStack()
+                true
+            }
+
             else -> super.onOptionsItemSelected(item)
 
         }
@@ -94,6 +113,13 @@ class RecipeNewFragment :
         binding?.authorName?.setText(recipe.author)
         binding?.imageFavourite?.isChecked = recipe.isFavourite
         selectedSpinner = viewModel.getCategoryName(recipe.category) ?: "No category set"
+
+        requireActivity().setTitle(
+            if ( recipe.name.isBlank() || recipe.name.isEmpty() )
+                " Creating new recipe"
+            else
+                " Editing: " + recipe.name
+        )
 
         // Creating a drop down list for categories
         val spinner = binding?.categoryChoose
