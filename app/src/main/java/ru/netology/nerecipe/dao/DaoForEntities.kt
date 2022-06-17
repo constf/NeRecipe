@@ -43,6 +43,11 @@ interface RecStepsDao {
     @Query("UPDATE recipe_steps SET rec_id = :newId WHERE rec_id = :oldId")
     fun updateRecipesIds(oldId: Long, newId: Long)
 
+    @Query("UPDATE recipe_steps SET step_content = :newContent WHERE id_step = :stepId")
+    fun updateStepContent(newContent: String, stepId: Long)
+
+    @Update
+    fun updateStep(step: RecStepEntity)
 }
 
 @Dao
@@ -68,5 +73,8 @@ interface CategoryDao {
 
     @Query("UPDATE categories SET show_or_not = 0 WHERE id_cat = :id")
     fun setNotVisible(id: Long)
+
+    @Query("SELECT id_cat FROM categories WHERE name_cat = :category")
+    fun getIdByName(category: String?): Long?
 }
 

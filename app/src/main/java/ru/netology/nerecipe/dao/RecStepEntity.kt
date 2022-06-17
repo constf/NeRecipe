@@ -9,7 +9,7 @@ import ru.netology.nerecipe.dto.RecipeStep
 @Entity(tableName = "recipe_steps",
     foreignKeys = [ForeignKey(entity = RecipeEntity::class,
     parentColumns = ["id_rec"], childColumns = ["rec_id"],
-    onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.CASCADE)]
+    onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.NO_ACTION)]
 )
 data class RecStepEntity(
     @PrimaryKey(autoGenerate = true)

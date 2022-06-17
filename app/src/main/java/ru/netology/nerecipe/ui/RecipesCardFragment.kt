@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.commit
 import com.google.android.material.button.MaterialButton
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.adapter.StepsAdapter
@@ -48,6 +49,7 @@ class RecipesCardFragment : Fragment() {
                 setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.recipe_edit -> {
+                            viewModel.onEditRecipe(recipe)
                             true
                         }
                         R.id.recipe_remove -> {
@@ -60,6 +62,21 @@ class RecipesCardFragment : Fragment() {
                 }
             }.show()
         }
+
+        viewModel.editRecipe.observe(viewLifecycleOwner) { recipe ->
+            if (recipe == null) return@observe
+            parentFragmentManager.commit {
+                addToBackStack(null)
+                replace(R.id.app_fragment_container, RecipeNewFragment())
+            }
+        }
+
+//        viewModel.navigateToRecipeEditScreen.observe(viewLifecycleOwner) {
+//            parentFragmentManager.commit {
+//                addToBackStack(null)
+//                replace(R.id.app_fragment_container, RecipeEditFragment())
+//            }
+//        }
 
         binding?.imageFavourite?.setOnClickListener {
             val button = it as MaterialButton

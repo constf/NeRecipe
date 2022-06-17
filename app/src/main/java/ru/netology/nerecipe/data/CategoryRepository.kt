@@ -13,4 +13,5 @@ interface CategoryRepository {
     fun setNotVisible(id: Long)
 
     fun getName(getId: Long): String?
+    fun getIdByName(category: String?): Long?
 }

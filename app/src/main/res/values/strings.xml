@@ -12,4 +12,5 @@
     <string name="item_remove_more">Remove</string>
     <string name="recipe_name_hint_string">Name of a recipe here</string>
     <string name="author_name_hint_string">Author name here</string>
+    <string name="save_string">Save</string>
 </resources>

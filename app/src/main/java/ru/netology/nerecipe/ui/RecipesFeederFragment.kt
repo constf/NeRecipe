@@ -39,6 +39,10 @@ class RecipesFeederFragment : Fragment() {
         binding?.recipesList?.adapter = adapter
 
 
+        viewModel.catData.observe(viewLifecycleOwner){
+            viewModel.initCategories()
+        }
+
         // Submit the list of recipes for the RW with the account of possible applied filter
         viewModel.recData.observe(viewLifecycleOwner) { recipes ->
             val filter = viewModel.recipeNamesFilter.value
@@ -88,9 +92,10 @@ class RecipesFeederFragment : Fragment() {
             viewModel.addNewRecipe()
 
         }
-        viewModel.navigateToNewRecipeScreen.observe(viewLifecycleOwner) {
+        viewModel.editRecipe.observe(viewLifecycleOwner) { recipe ->
+            if (recipe == null) return@observe
             parentFragmentManager.commit {
-                addToBackStack(null)
+                addToBackStack("RecipesFeeder")
                 replace(R.id.app_fragment_container, RecipeNewFragment())
             }
         }

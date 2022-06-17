@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.view.doOnDetach
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.RecipesDetailsBinding
 import ru.netology.nerecipe.databinding.StepDetailsBinding
@@ -46,13 +49,20 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
                 stepContent.setText(step.content)
                 stepContent.inputType = InputType.TYPE_NULL
 
-                // Setting the image to show. Sored in
+                // Setting the image to show.
                 val picName = step.picture
                 if (picName == "empty"){
                     stepPicture.isVisible = false
-                    return@with
+                } else
+                    stepPicture.setImageResource(helper.getResId(picName))
+
+                stepDetailsCard.setOnClickListener {
+                    helper.editStep(step)
                 }
-                stepPicture.setImageResource(helper.getResId(picName))
+
+                stepContent.setOnClickListener {
+                    helper.editStep(step)
+                }
             }
 
         }
@@ -64,10 +74,26 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
                 stepContent.setText(step.content)
                 stepContent.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
 
-                // Setting the image to show. Sored in
+                stepContent.setOnFocusChangeListener { view, b ->
+                    val text = (view as TextInputEditText).text.toString()
+                    if (text.isNullOrBlank()) return@setOnFocusChangeListener
+                    val editedStep = step.copy(content = text)
+                    // helper.onEditStepContents(step.id, text)
+                    helper.updateStep(editedStep)
+                }
+
+                // Setting the image to show. Either R.id or uri
                 val picName = step.picture
-                if (picName != "empty"){
+                val picUri = step.pUri
+
+                if (picName != "empty" && picUri == null) {
                     stepPicture.setImageResource(helper.getResId(picName))
+                } else if (picUri != null) {
+                    stepPicture.setImageURI(picUri)
+                }
+
+                stepPicture.setOnClickListener {
+                    helper.onChoosePictureClicked(step)
                 }
 
                 menuMore.setOnClickListener {

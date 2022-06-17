@@ -41,4 +41,12 @@ class RecipeStepsRepositoryImplementation(private val dao: RecStepsDao): RecipeS
         return rs
     }
 
+    override fun updateContent(stepId: Long, newContent: String) {
+        dao.updateStepContent(newContent, stepId)
+    }
+
+    override fun updateStep(step: RecipeStep) {
+        dao.insert(step.toEntity())
+    }
+
 }

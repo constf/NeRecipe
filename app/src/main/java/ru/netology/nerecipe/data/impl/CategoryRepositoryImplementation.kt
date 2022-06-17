@@ -21,6 +21,9 @@ class CategoryRepositoryImplementation(private val dao: CategoryDao): CategoryRe
         }
     }
 
+    override fun getIdByName(category: String?): Long? {
+        return dao.getIdByName(category)
+    }
 
     override fun save(cat: RecCategory): Long {
         return dao.insert(cat.toEntity())
