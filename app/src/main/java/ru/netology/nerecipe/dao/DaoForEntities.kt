@@ -14,6 +14,10 @@ interface RecipesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(newRecipe: RecipeEntity) : Long
 
+    @Query("SELECT * FROM recipes " +
+            "WHERE id_rec = :getId LIMIT 1")
+    fun getRecipeById(getId: Long): RecipeEntity
+
     @Query("DELETE FROM recipes WHERE id_rec = :remId")
     fun removeById(remId: Long)
 
@@ -36,6 +40,11 @@ interface RecStepsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(newStep: RecStepEntity): Long
+
+    @Query("SELECT * FROM recipe_steps " +
+            "WHERE id_step = :getId LIMIT 1")
+    fun getStepById(getId: Long): RecStepEntity
+
 
     @Query("DELETE FROM recipe_steps WHERE id_step = :remId")
     fun removeById(remId: Long)

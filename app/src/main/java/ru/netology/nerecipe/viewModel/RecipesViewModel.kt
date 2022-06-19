@@ -31,6 +31,8 @@ class RecipesViewModel(val inApplication: Application):
 
     //
     var isNewRecipe: Boolean = false
+    var isNewStep: Boolean = false
+    var selectedSpinner: String? = "empty"
 
     // Categories data section
     private val categoriesRepo: CategoryRepository =
@@ -56,6 +58,7 @@ class RecipesViewModel(val inApplication: Application):
     val editedStepsList: MutableList<RecipeStep> = mutableListOf()
     val editStep = SingleLiveEvent<RecipeStep?>()
     private var editedStepsCount = 1L
+    var stepUri: Uri? = null
 
     fun saveStep(step: RecipeStep) = recStepsRepo.save(step)
     fun removeStep(step: RecipeStep) = recStepsRepo.remove(step.id)
@@ -63,16 +66,36 @@ class RecipesViewModel(val inApplication: Application):
     fun clearEditedSteps() { editedStepsList.clear(); editedStepsCount = 1 }
 
     fun setEditedStepsPicture(picUri: Uri?) {
-//        val stepId = chooseThePicture.value?.id //This function is called from inside the observer of chooseThePicture
-//
-//        val steps = editedStepsList.value
-//        val newList = steps?.map { step ->
-//            if (step.id == stepId)
-//                step.copy(picture = "empty", pUri = picUri)
-//            else
-//                step
-//        }
-//        editedStepsList.value = newList
+        // Basic checks
+        val step = chooseThePicture.value ?: return
+        if (picUri == null) return
+
+        val stepId = step.id //This function is called from inside the observer of chooseThePicture
+
+        stepUri = picUri
+
+        // Extract the bitmap
+        val inputStream = inApplication.contentResolver.openInputStream(picUri)
+        val drawable = Drawable.createFromStream(inputStream, stepUri.toString())
+        val bitmap = (drawable as BitmapDrawable).bitmap
+
+        // arrange a file for it in drawable folder
+        val timeMills = System.currentTimeMillis()
+        val fileName: String = "picture_" + timeMills.toString() + ".jpg"
+        var file = inApplication.getDir("drawable", Context.MODE_PRIVATE)
+        file = File(file, fileName)
+
+        // write bitmap to this file
+        try {
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+        // save step with picture name
+        saveStep(step.copy(picture = fileName))
     }
 
 
@@ -98,6 +121,7 @@ class RecipesViewModel(val inApplication: Application):
 
     override fun editStep(step: RecipeStep) {
         editStep.value = step
+        isNewStep = false
     }
 
 
@@ -140,6 +164,7 @@ class RecipesViewModel(val inApplication: Application):
     fun addNewEditedStep() {
         val recId = editRecipe.value?.id ?: return
         val step: RecipeStep = RecipeStep(NEW_ITEM_ID, recId, "")
+        isNewStep = true
         val stepId = saveStep(step)
         editStep.value = step.copy(id = stepId)
     }
@@ -157,36 +182,8 @@ class RecipesViewModel(val inApplication: Application):
 
         val stepsList = stepsFilteredData.value?.filter { it.recipeId == recId }
 
-        // val stepsList = editedStepsList
-
         stepsList?.forEach{ step ->
             updateStep(step)
-            val stepUri = step.pUri
-            if (stepUri != null) { // writing the user chosen picture to the drawables folder
-                // get the bitmap from the URI
-                val inputStream = inApplication.contentResolver.openInputStream(stepUri)
-                val drawable = Drawable.createFromStream(inputStream, stepUri.toString())
-                val bitmap = (drawable as BitmapDrawable).bitmap
-
-                // arrange a file for it in res folder
-                val timeMills = System.currentTimeMillis()
-                val fileName: String = "picture_" + timeMills.toString() + ".jpg"
-                var file = inApplication.getDir("drawable", Context.MODE_PRIVATE)
-                file = File(file, fileName)
-
-                // write bitmap to this file
-                try {
-                    val stream: OutputStream = FileOutputStream(file)
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                    stream.flush()
-                    stream.close()
-                }catch (e: IOException){
-                    e.printStackTrace()
-                }
-                // save step with picture name
-                saveStep(step.copy(picture = fileName))
-            }
-
         }
 
         editRecipe.value = null
@@ -218,6 +215,14 @@ class RecipesViewModel(val inApplication: Application):
     fun onSaveEditedStep(newStep: RecipeStep) {
         saveStep(newStep)
         editStep.value = null
+    }
+
+    fun getRecipeById(id: Long): Recipe? {
+        return recipesRepo.getRecipeById(id)
+    }
+
+    fun getStepById(stepId: Long): RecipeStep {
+        return recStepsRepo.getStepById(stepId)
     }
 
 }

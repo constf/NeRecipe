@@ -13,4 +13,5 @@ interface RecipeStepsRepository {
     fun update(oldId: Long, newId: Long)
     fun updateContent(stepId: Long, newContent: String)
     fun updateStep(step: RecipeStep)
+    fun getStepById(getId: Long): RecipeStep
 }

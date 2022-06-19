@@ -9,5 +9,5 @@ interface RecipeRepository {
     fun save(recipe: Recipe): Long
     fun remove(id: Long)
     fun setFavourite(id: Long, favourite: Boolean)
-
+    fun getRecipeById(getId: Long): Recipe
 }

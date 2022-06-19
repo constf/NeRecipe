@@ -22,7 +22,9 @@ class RecipeStepsRepositoryImplementation(private val dao: RecStepsDao): RecipeS
         filteredList.map { it.toModel() }
     }
 
-
+    override fun getStepById(getId: Long): RecipeStep {
+        return dao.getStepById(getId).toModel()
+    }
 
     override fun save(step: RecipeStep): Long {
         return dao.insert(step.toEntity())

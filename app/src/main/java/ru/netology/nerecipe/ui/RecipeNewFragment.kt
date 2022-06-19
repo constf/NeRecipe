@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
+import androidx.fragment.app.setFragmentResult
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.adapter.StepsAdapter
 import ru.netology.nerecipe.databinding.FragmentRecipeNewBinding
@@ -31,21 +33,13 @@ class RecipeNewFragment :
     private var _binding: FragmentRecipeNewBinding? = null
     private val binding get() = _binding
 
-    private var recipeEdited: Recipe? = null
-
-    private var selectedSpinner: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
-            if (viewModel.isNewRecipe)
-                requireActivity().setTitle("NeRecipe")
-            else
-                requireActivity().setTitle(" Recipe: " + recipeEdited?.name)
-
-            parentFragmentManager.popBackStack()
+            goBackWithDialog()
         }
     }
 
@@ -64,29 +58,32 @@ class RecipeNewFragment :
                         return true
                     }
 
-                    val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 0L
-                    val recipe = recipeEdited?.copy(name = recipeName.text.toString(),
+                    val selectedSpinner = viewModel.selectedSpinner
+                    val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
+                    val recipeSave = viewModel.getEditedRecipe()?.copy(name = recipeName.text.toString(),
                         author = authorName.text.toString(), category = catId,
                         isFavourite = imageFavourite.isChecked) ?: return false
 
                     authorName.requestFocus() // Saving the last edited step in any case with focusChange event in StepsAdapter
 
-                    viewModel.onSaveEditedRecipe(recipe)
+                    viewModel.onSaveEditedRecipe(recipeSave)
                 }
                 if (viewModel.isNewRecipe)
                     requireActivity().setTitle("NeRecipe")
                 else
-                    requireActivity().setTitle(" Recipe: " + recipeEdited?.name)
+                    requireActivity().setTitle(" Recipe: " + viewModel.getEditedRecipe()?.name)
+
+                val resultBundle = Bundle(1)
+                val content = RESULT_VALUE
+                resultBundle.putString(RESULT_KEY, content)
+                setFragmentResult(REQUEST_KEY, resultBundle)
+
                 parentFragmentManager.popBackStack()
                 true
             }
 
             R.id.recipe_new_options_discard -> {
-                if (viewModel.isNewRecipe)
-                    requireActivity().setTitle("NeRecipe")
-                else
-                    requireActivity().setTitle(" Recipe: " + recipeEdited?.name)
-                parentFragmentManager.popBackStack()
+                goBackWithDialog()
                 true
             }
 
@@ -107,12 +104,11 @@ class RecipeNewFragment :
 
         // Initializing the View fileds
         val recipe = viewModel.getEditedRecipe() ?: return binding?.root
-        recipeEdited = recipe
 
         binding?.recipeName?.setText(recipe.name)
         binding?.authorName?.setText(recipe.author)
         binding?.imageFavourite?.isChecked = recipe.isFavourite
-        selectedSpinner = viewModel.getCategoryName(recipe.category) ?: "No category set"
+        val selectedSpinner = viewModel.getCategoryName(recipe.category) ?: "No category set"
 
         requireActivity().setTitle(
             if ( recipe.name.isBlank() || recipe.name.isEmpty() )
@@ -138,7 +134,7 @@ class RecipeNewFragment :
         }
 
         // List of steps for this recipe
-        val adapter = StepsAdapter(viewModel, StepsAdapter.SHOW_ADAPTER)
+        val adapter = StepsAdapter(viewModel, StepsAdapter.EDIT_ADAPTER)
         binding?.stepsListNew?.adapter = adapter
 
         viewModel.stepsFilteredData.observe(viewLifecycleOwner) { steps ->
@@ -172,7 +168,7 @@ class RecipeNewFragment :
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-        selectedSpinner = parent?.getItemAtPosition(pos) as String
+        viewModel.selectedSpinner = parent?.getItemAtPosition(pos) as String
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -185,4 +181,47 @@ class RecipeNewFragment :
 
         Log.d("onActivityResult-URI", data?.data.toString())
     }
+
+
+    private fun setTitlebarNameOnBack() {
+        if (viewModel.isNewRecipe)
+            requireActivity().setTitle("NeRecipe")
+        else
+            requireActivity().setTitle(" Recipe: " + viewModel.getEditedRecipe()?.name)
+    }
+
+
+    private fun goBackWithDialog() {
+        val nameIsSame = viewModel.getEditedRecipe()?.name?.equals(binding?.recipeName?.text.toString()) ?: false
+        val authorIsSame = viewModel.getEditedRecipe()?.author?.equals(binding?.authorName?.text.toString()) ?: false
+        val selectedSpinner = viewModel.selectedSpinner
+        val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
+        val catChanged = viewModel.getEditedRecipe()?.category != catId
+        val recipeDiscard = viewModel.getEditedRecipe()
+
+        if (!nameIsSame || !authorIsSame || catChanged) {
+            MaterialAlertDialogBuilder(requireContext())
+                .setMessage("Are you sure to discard the changes?")
+                .setNegativeButton("No, stay here"){ dialog, which ->
+
+                }.setPositiveButton("Yes, discard."){ dialog, which ->
+                    if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
+                    setTitlebarNameOnBack()
+                    parentFragmentManager.popBackStack()
+                }.show()
+        } else {
+            if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
+            setTitlebarNameOnBack()
+            parentFragmentManager.popBackStack()
+        }
+    }
+
+
+    companion object {
+        const val REQUEST_KEY = ".edit fragment"
+        const val RESULT_KEY = ".EDIT RESULT"
+        const val RESULT_VALUE = ".EDITED OK"
+    }
+
+
 }

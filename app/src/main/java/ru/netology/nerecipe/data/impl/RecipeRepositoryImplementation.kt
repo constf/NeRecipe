@@ -29,6 +29,10 @@ class RecipeRepositoryImplementation(private val dao: RecipesDao): RecipeReposit
         dao.setFavourite(id, favourite)
     }
 
+    override fun getRecipeById(getId: Long): Recipe {
+        return dao.getRecipeById(getId).toModel()
+    }
+
     fun get(getId: Long): Recipe? {
         val rec = recipes.find { it.id == getId }
         return rec

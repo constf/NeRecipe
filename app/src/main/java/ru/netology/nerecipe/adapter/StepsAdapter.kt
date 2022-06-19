@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.doOnDetach
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.RecipesDetailsBinding
@@ -34,7 +36,7 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
     override fun onBindViewHolder(holder: StepViewHolder, position: Int) {
         when (bindType) {
             SHOW_ADAPTER -> holder.bindForShow(getItem(position))
-            // EDIT_ADAPTER -> holder.bindForEdit(getItem(position))
+            EDIT_ADAPTER -> holder.bindForEdit(getItem(position))
             else -> Log.d("StepsShowAdapter Viewholder", "Invalid bindType parameter")
         }
     }
@@ -46,70 +48,73 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
         fun bindForShow(step: RecipeStep) {
             with (binding) {
                 stepContent.text = step.content
+                menuMore.isVisible = false
 
                 // Setting the image to show.
-                val picName = step.picture
+                val fileName = step.picture
+                val name = fileName.split(".")
+                val picName = name[0]
                 if (picName == "empty"){
                     stepPicture.isVisible = false
                 } else {
-                    stepPicture.setImageResource(helper.getResId(picName))
+                    stepPicture.isVisible = true
+                    val resId = helper.getResId(picName)
+                    stepPicture.setImageResource(resId)
+                }
+
+            }
+        }
+
+        fun bindForEdit(step: RecipeStep) {
+
+            with (binding) {
+                // No editing, just show the text
+                stepContent.text = step.content
+                menuMore.isVisible = true
+
+                // Setting the image to show. Either R.id or uri
+                val fileName = step.picture
+                val name = fileName.split(".")
+                val picName = name[0]
+
+                val picUri = step.pUri
+
+                if (picName == "empty"){
+                    stepPicture.isVisible = false
+                } else if (picUri == null) {
+                    stepPicture.isVisible = true
+                    val resId = helper.getResId(picName)
+                    stepPicture.setImageResource(resId)
+                } else {
+                    stepPicture.isVisible = true
+                    stepPicture.setImageURI(picUri)
                 }
 
                 stepDetailsCard.setOnClickListener {
                     helper.editStep(step)
                 }
 
+                menuMore.setOnClickListener {
+                    PopupMenu(it.context, it).apply {
+                        inflate(R.menu.step_edit_options)
+                        setOnMenuItemClickListener { item ->
+                            when(item.itemId) {
+                                R.id.step_remove -> {
+                                    MaterialAlertDialogBuilder(it.context)
+                                        .setMessage("Are you sure to delete this step description?")
+                                        .setNegativeButton("No, let it stay"){ dialog, which -> }
+                                        .setPositiveButton("Yes, delete!"){ dialog, which ->
+                                            helper.deleteEditedStep(step)
+                                        }.show()
+                                    true
+                                }
+                                else -> false
+                            }
+                        }
+                    }.show()
+                }
             }
         }
-
-//        fun bindForEdit(step: RecipeStep) {
-//
-//            with (binding) {
-//                // No editing, just show the text
-//                stepContent.setText(step.content)
-//                stepContent.inputType = InputType.TYPE_TEXT_FLAG_MULTI_LINE
-//
-//                stepContent.setOnFocusChangeListener { view, b ->
-//                    val text = (view as TextInputEditText).text.toString()
-//                    if (text.isNullOrBlank()) return@setOnFocusChangeListener
-//                    val editedStep = step.copy(content = text)
-//                    // helper.onEditStepContents(step.id, text)
-//                    helper.updateStep(editedStep)
-//                }
-//
-//                // Setting the image to show. Either R.id or uri
-//                val picName = step.picture
-//                val picUri = step.pUri
-//
-//                if (picName != "empty" && picUri == null) {
-//                    stepPicture.setImageResource(helper.getResId(picName))
-//                } else if (picUri != null) {
-//                    stepPicture.setImageURI(picUri)
-//                }
-//
-//                stepPicture.setOnClickListener {
-//                    helper.onChoosePictureClicked(step)
-//                }
-//
-//                menuMore.setOnClickListener {
-//                    PopupMenu(it.context, it).apply {
-//                        inflate(R.menu.step_edit_options)
-//                        setOnMenuItemClickListener { item ->
-//                            when(item.itemId) {
-//                                R.id.step_remove -> {
-//                                    helper.deleteEditedStep(step)
-//                                    true
-//                                }
-//                                else -> false
-//                            }
-//                        }
-//                    }.show()
-//                }
-//
-//            }
-//
-//        }
-
     }
 
     private object StepsDiffCallback: DiffUtil.ItemCallback<RecipeStep>() {

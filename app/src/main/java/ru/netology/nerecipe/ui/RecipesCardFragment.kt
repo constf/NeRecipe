@@ -9,7 +9,9 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
+import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.adapter.StepsAdapter
 import ru.netology.nerecipe.databinding.FragmentRecipeCardBinding
@@ -36,18 +38,19 @@ class RecipesCardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val recipe = viewModel.showRecipe.value ?: return super.onCreateView(inflater, container, savedInstanceState)
+        val getRecipe = viewModel.showRecipe.value ?: return super.onCreateView(inflater, container, savedInstanceState)
+        val recipe = viewModel.getRecipeById(getRecipe.id)
 
         _binding = FragmentRecipeCardBinding.inflate(inflater, container, false)
 
         val adapter: StepsAdapter = StepsAdapter(viewModel, StepsAdapter.SHOW_ADAPTER)
 
-        requireActivity().setTitle(" Recipe: " + recipe.name)
+        requireActivity().setTitle(" Recipe: " + recipe?.name)
 
-        binding?.recipeName?.text = recipe.name
-        binding?.authorName?.text = recipe.author
-        binding?.categoryText?.text = viewModel.getCatNameId(recipe.category)
-        binding?.imageFavourite?.isChecked = recipe.isFavourite
+        binding?.recipeName?.text = recipe?.name
+        binding?.authorName?.text = recipe?.author
+        binding?.categoryText?.text = viewModel.getCatNameId(recipe!!.category)
+        binding?.imageFavourite?.isChecked = recipe!!.isFavourite
 
         binding?.stepsList?.adapter = adapter
 
@@ -65,8 +68,13 @@ class RecipesCardFragment : Fragment() {
                             true
                         }
                         R.id.recipe_remove -> {
-                            viewModel.deleteRecipe(recipe)
-                            parentFragmentManager.popBackStack()
+                            MaterialAlertDialogBuilder(it.context)
+                                .setMessage("Are you sure to delete this Recipe with descriptions?")
+                                .setNegativeButton("No, let it stay"){ dialog, which -> }
+                                .setPositiveButton("Yes, delete!"){ dialog, which ->
+                                    viewModel.deleteRecipe(recipe)
+                                    parentFragmentManager.popBackStack()
+                                }.show()
                             true
                         }
                         else -> false
@@ -94,6 +102,19 @@ class RecipesCardFragment : Fragment() {
             val button = it as MaterialButton
             viewModel.setFavourite(recipe.id, button.isChecked)
         }
+
+        setFragmentResultListener(RecipeNewFragment.REQUEST_KEY){ requestKey, bundle ->
+            if (requestKey != RecipeNewFragment.REQUEST_KEY) return@setFragmentResultListener
+            val result = bundle.getString(RecipeNewFragment.RESULT_KEY) ?: return@setFragmentResultListener
+            if (result != RecipeNewFragment.RESULT_VALUE) return@setFragmentResultListener
+
+            val updateRecipe = viewModel.getRecipeById(getRecipe.id)
+            binding?.recipeName?.text = updateRecipe?.name
+            binding?.authorName?.text = updateRecipe?.author
+            binding?.categoryText?.text = viewModel.getCatNameId(updateRecipe!!.category)
+            binding?.imageFavourite?.isChecked = updateRecipe!!.isFavourite
+        }
+
 
         return binding?.root
     }

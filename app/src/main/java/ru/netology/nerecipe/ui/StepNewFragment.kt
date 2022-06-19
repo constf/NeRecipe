@@ -9,11 +9,14 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.FragmentRecipeNewBinding
 import ru.netology.nerecipe.databinding.StepDetailsEditBinding
+import ru.netology.nerecipe.dto.RecipeStep
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 class StepNewFragment: Fragment() {
@@ -22,12 +25,12 @@ class StepNewFragment: Fragment() {
     private var _binding: StepDetailsEditBinding? = null
     private val binding get() = _binding!!
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
+            goBackWithDialog()
         }
     }
 
@@ -43,6 +46,7 @@ class StepNewFragment: Fragment() {
 
         with(binding){
             stepContent.setText(step?.content)
+
 
             val picName = step?.picture
             val picUri = step?.pUri
@@ -69,7 +73,6 @@ class StepNewFragment: Fragment() {
             menuMore.isVisible = false
         }
 
-
         return binding?.root
     }
 
@@ -82,20 +85,22 @@ class StepNewFragment: Fragment() {
             R.id.recipe_new_options_save -> {
                 with(binding){
                     if (stepContent.text.toString().isNullOrBlank()){
-                        Toast.makeText(context, "Recipe step description not be empty!", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, "Recipe step description can not be empty!", Toast.LENGTH_SHORT)
                             .also { it.setGravity(Gravity.CENTER_VERTICAL, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT) }
                             .show()
                         return true
                     }
-                    val newStep = viewModel.getEditedStep()?.copy(content = stepContent.text.toString())
-                    viewModel.onSaveEditedStep(newStep!!)
+
+                    val stepId = viewModel.getEditedStep()?.id ?: return true
+                    val newStep = viewModel.getStepById(stepId).copy(content = stepContent.text.toString())
+                    viewModel.onSaveEditedStep(newStep)
                 }
                 parentFragmentManager.popBackStack()
                 true
             }
 
             R.id.recipe_new_options_discard -> {
-                parentFragmentManager.popBackStack()
+                goBackWithDialog()
                 true
             }
 
@@ -106,9 +111,32 @@ class StepNewFragment: Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode != IMAGE_PICK_KEY || resultCode != Activity.RESULT_OK) return
-        viewModel.setEditedStepsPicture(data?.data)
+        val picUri = data?.data
+        viewModel.setEditedStepsPicture(picUri)
+        binding.stepPicture.setImageURI(picUri)
 
         Log.d("onActivityResult-URI", data?.data.toString())
+    }
+
+
+    private fun goBackWithDialog() {
+        val textSame = viewModel.getEditedStep()?.content?.equals(binding.stepContent.text.toString()) ?: false
+        val pictureAdded = viewModel.getEditedStep()?.pUri != null
+        val stepDiscard = viewModel.getEditedStep()
+
+        if (!textSame || pictureAdded) {
+            MaterialAlertDialogBuilder(requireContext())
+                .setMessage("Are you sure to discard the changes?")
+                .setNegativeButton("No, stay here"){ dialog, which ->
+
+                }.setPositiveButton("Yes, discard."){ dialog, which ->
+                    if ( viewModel.isNewStep && stepDiscard != null) viewModel.removeStep(stepDiscard)
+                    parentFragmentManager.popBackStack()
+                }.show()
+        } else {
+            if ( viewModel.isNewStep && stepDiscard != null) viewModel.removeStep(stepDiscard)
+            parentFragmentManager.popBackStack()
+        }
     }
 
 
