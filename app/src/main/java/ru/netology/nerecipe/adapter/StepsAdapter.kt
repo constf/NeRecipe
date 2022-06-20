@@ -51,17 +51,13 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
                 menuMore.isVisible = false
 
                 // Setting the image to show.
-                val fileName = step.picture
-                val name = fileName.split(".")
-                val picName = name[0]
-                if (picName == "empty"){
+                val name = step.picture
+                if (name == "empty"){
                     stepPicture.isVisible = false
                 } else {
                     stepPicture.isVisible = true
-                    val resId = helper.getResId(picName)
-                    stepPicture.setImageResource(resId)
+                    stepPicture.setImageBitmap(helper.getBitmapFromFile(name))
                 }
-
             }
         }
 
@@ -73,18 +69,15 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
                 menuMore.isVisible = true
 
                 // Setting the image to show. Either R.id or uri
-                val fileName = step.picture
-                val name = fileName.split(".")
-                val picName = name[0]
+                val name = step.picture
 
                 val picUri = step.pUri
 
-                if (picName == "empty"){
+                if (name == "empty"){
                     stepPicture.isVisible = false
                 } else if (picUri == null) {
                     stepPicture.isVisible = true
-                    val resId = helper.getResId(picName)
-                    stepPicture.setImageResource(resId)
+                    stepPicture.setImageBitmap(helper.getBitmapFromFile(name))
                 } else {
                     stepPicture.isVisible = true
                     stepPicture.setImageURI(picUri)

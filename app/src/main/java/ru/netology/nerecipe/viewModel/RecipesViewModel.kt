@@ -3,6 +3,7 @@ package ru.netology.nerecipe.viewModel
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -82,15 +83,16 @@ class RecipesViewModel(val inApplication: Application):
         // arrange a file for it in drawable folder
         val timeMills = System.currentTimeMillis()
         val fileName: String = "picture_" + timeMills.toString() + ".jpg"
-        var file = inApplication.getDir("drawable", Context.MODE_PRIVATE)
-        file = File(file, fileName)
+        // var file = inApplication.getDir("drawable", Context.MODE_PRIVATE)
+        // file = File(file, fileName)
+        val fos = inApplication.openFileOutput(fileName, Context.MODE_PRIVATE)
 
         // write bitmap to this file
         try {
-            val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            stream.flush()
-            stream.close()
+            // val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.flush()
+            fos.close()
         }catch (e: IOException){
             e.printStackTrace()
         }
@@ -124,6 +126,14 @@ class RecipesViewModel(val inApplication: Application):
         isNewStep = false
     }
 
+    override fun getBitmapFromFile(name: String): Bitmap? {
+        val file = inApplication.filesDir.resolve(name)
+        if ( !file.exists() ) return null
+        val fis = inApplication.openFileInput(name)
+        val bm = BitmapFactory.decodeStream(fis)
+        fis.close()
+        return bm
+    }
 
     fun setRecipeNamesFilter(newText: String) {
         recipeNamesFilter.value = newText
