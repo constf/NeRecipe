@@ -146,22 +146,12 @@ class RecipeNewFragment :
             viewModel.addNewEditedStep()
         }
 
-        viewModel.editStep.observe(viewLifecycleOwner) { editedStep ->
-            if (editedStep == null) return@observe
+        viewModel.navigateToNewStepEdit.observe(viewLifecycleOwner) {
+            if (viewModel.getEditedStep() == null) return@observe
             parentFragmentManager.commit {
                 addToBackStack(null)
                 replace(R.id.app_fragment_container, StepNewFragment())
             }
-        }
-
-        // Choose the picture from the Gallery
-        viewModel.chooseThePicture.observe(viewLifecycleOwner) { step ->
-            if (step == null) return@observe
-            val intent = Intent().apply {
-                action = Intent.ACTION_PICK
-                type = "image/*"
-            }
-            startActivityForResult(intent, IMAGE_PICK_KEY, null)
         }
 
         return binding?.root
@@ -173,13 +163,6 @@ class RecipeNewFragment :
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
 
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != IMAGE_PICK_KEY || resultCode != Activity.RESULT_OK) return
-        viewModel.setEditedStepsPicture(data?.data)
-
-        Log.d("onActivityResult-URI", data?.data.toString())
     }
 
 

@@ -30,6 +30,11 @@ const val NEW_ITEM_ID = 0L
 class RecipesViewModel(val inApplication: Application):
     AndroidViewModel(inApplication), RecipesFeederHelper, StepsDetailsHelper {
 
+    var tempBitMap: Bitmap? = null
+    private var delayedPicture: String? = null
+    var delePictureOnGoBack: Boolean = false
+
+
     //
     var isNewRecipe: Boolean = false
     var isNewStep: Boolean = false
@@ -57,14 +62,15 @@ class RecipesViewModel(val inApplication: Application):
         RecipeStepsRepositoryImplementation(AppDb.getInstance(inApplication).recStepsDao)
     val stepsFilteredData by recStepsRepo::dataFiltered
     val editedStepsList: MutableList<RecipeStep> = mutableListOf()
-    val editStep = SingleLiveEvent<RecipeStep?>()
+    private var editStep: RecipeStep? = null
     private var editedStepsCount = 1L
     var stepUri: Uri? = null
+
 
     fun saveStep(step: RecipeStep) = recStepsRepo.save(step)
     fun removeStep(step: RecipeStep) = recStepsRepo.remove(step.id)
 
-    fun clearEditedSteps() { editedStepsList.clear(); editedStepsCount = 1 }
+    fun clearEditedStep() { editStep = null }
 
     fun setEditedStepsPicture(picUri: Uri?) {
         // Basic checks
@@ -75,6 +81,7 @@ class RecipesViewModel(val inApplication: Application):
 
         stepUri = picUri
 
+
         // Extract the bitmap
         val inputStream = inApplication.contentResolver.openInputStream(picUri)
         val drawable = Drawable.createFromStream(inputStream, stepUri.toString())
@@ -83,27 +90,27 @@ class RecipesViewModel(val inApplication: Application):
         // arrange a file for it in drawable folder
         val timeMills = System.currentTimeMillis()
         val fileName: String = "picture_" + timeMills.toString() + ".jpg"
-        // var file = inApplication.getDir("drawable", Context.MODE_PRIVATE)
-        // file = File(file, fileName)
         val fos = inApplication.openFileOutput(fileName, Context.MODE_PRIVATE)
 
         // write bitmap to this file
         try {
-            // val stream: OutputStream = FileOutputStream(file)
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
             fos.flush()
             fos.close()
         }catch (e: IOException){
             e.printStackTrace()
         }
+
         // save step with picture name
-        saveStep(step.copy(picture = fileName))
+        editStep = step.copy(picture = fileName, pUri = picUri)
+        saveStep(editStep!!)
     }
 
 
     // Events in UI
     val navigateToRecipeEditScreen = SingleLiveEvent<Unit>()
     val navigateToNewRecipeScreen = SingleLiveEvent<Unit>()
+    val navigateToNewStepEdit = SingleLiveEvent<Unit>()
     val chooseThePicture = SingleLiveEvent<RecipeStep?>()
 
 
@@ -122,8 +129,9 @@ class RecipesViewModel(val inApplication: Application):
     }
 
     override fun editStep(step: RecipeStep) {
-        editStep.value = step
+        editStep = step
         isNewStep = false
+        navigateToNewStepEdit.call()
     }
 
     override fun getBitmapFromFile(name: String): Bitmap? {
@@ -163,12 +171,8 @@ class RecipesViewModel(val inApplication: Application):
     override fun onRecipeClicked(recipe: Recipe?) {
         showRecipe.value = recipe
     }
+
     override fun getCategoryName(id: Long) = getCatNameId(id)
-
-    override fun getResId(name: String): Int {
-        return inApplication.resources.getIdentifier(name, "drawable", inApplication.packageName)
-    }
-
 
 
     fun addNewEditedStep() {
@@ -176,11 +180,16 @@ class RecipesViewModel(val inApplication: Application):
         val step: RecipeStep = RecipeStep(NEW_ITEM_ID, recId, "")
         isNewStep = true
         val stepId = saveStep(step)
-        editStep.value = step.copy(id = stepId)
+        editStep = step.copy(id = stepId)
+        navigateToNewStepEdit.call()
     }
 
     override fun deleteEditedStep(step: RecipeStep) {
+        val oldvalue = editStep
+        editStep = step
+        deleteEditedStepPicture()
         recStepsRepo.remove(step.id)
+        editStep = oldvalue
     }
 
     fun setFavourite(id: Long, favourite: Boolean) {
@@ -219,12 +228,12 @@ class RecipesViewModel(val inApplication: Application):
     }
 
     fun getEditedStep(): RecipeStep? {
-        return editStep.value
+        return editStep
     }
 
     fun onSaveEditedStep(newStep: RecipeStep) {
         saveStep(newStep)
-        editStep.value = null
+        editStep = null
     }
 
     fun getRecipeById(id: Long): Recipe? {
@@ -234,5 +243,65 @@ class RecipesViewModel(val inApplication: Application):
     fun getStepById(stepId: Long): RecipeStep {
         return recStepsRepo.getStepById(stepId)
     }
+
+    fun deleteEditedStepPicture() {
+        val step = editStep
+        val name = step?.picture ?: return
+        if (name == "empty") return
+
+        val file = inApplication.filesDir.resolve(name)
+        if (file.exists()) {
+            file.delete()
+        }
+
+        editStep = step.copy(picture = "empty", pUri = null)
+        saveStep(editStep!!)
+    }
+
+    fun deleteDelayed() {
+        if (delayedPicture == null) return
+        if (editStep == null) return
+
+        val oldValue = editStep
+
+        if (delePictureOnGoBack){
+            editStep = editStep!!.copy(picture = delayedPicture!!)
+            deleteEditedStepPicture()
+        }
+        editStep = oldValue
+        delePictureOnGoBack = false
+        delayedPicture = null
+    }
+
+    fun setDelePictureDelayed() {
+        delePictureOnGoBack = true
+        delayedPicture = editStep?.picture
+    }
+
+    fun saveTempBitmapToFile() {
+        if (tempBitMap == null) return
+        val step = editStep ?: return
+
+        val bitmap = tempBitMap
+
+        val timeMills = System.currentTimeMillis()
+        val fileName: String = "picture_" + timeMills.toString() + ".jpg"
+        val fos = inApplication.openFileOutput(fileName, Context.MODE_PRIVATE)
+
+        // write bitmap to this file
+        try {
+            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, fos)
+            fos.flush()
+            fos.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+
+        // save step with picture name
+        editStep = step.copy(picture = fileName, pUri = null)
+        saveStep(editStep!!)
+        tempBitMap = null
+    }
+
 
 }

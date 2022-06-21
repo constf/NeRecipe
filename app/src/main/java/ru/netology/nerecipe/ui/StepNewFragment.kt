@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.AdapterView
+import android.widget.Button
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
@@ -47,12 +48,19 @@ class StepNewFragment: Fragment() {
         with(binding){
             stepContent.setText(step?.content)
 
-
             val picName = step?.picture
             val picUri = step?.pUri
 
             if (picName != "empty" && picUri == null) {
-                stepPicture.setImageResource(viewModel.getResId(picName!!))
+                viewModel.tempBitMap = viewModel.getBitmapFromFile(picName!!)
+                stepPicture.setImageBitmap(viewModel.tempBitMap)
+                binding.pictureDeleteButton.isVisible = true
+                binding.pictureDeleteButton.setOnClickListener {
+                    //viewModel.setDelePictureDelayed()
+                    viewModel.deleteEditedStepPicture()
+                    binding.stepPicture.setImageResource(androidx.transition.R.drawable.abc_ic_menu_selectall_mtrl_alpha)
+                    binding.pictureDeleteButton.isVisible = false
+                }
             } else if (picUri != null) {
                 stepPicture.setImageURI(picUri)
             }
@@ -91,8 +99,10 @@ class StepNewFragment: Fragment() {
                         return true
                     }
 
+
                     val stepId = viewModel.getEditedStep()?.id ?: return true
                     val newStep = viewModel.getStepById(stepId).copy(content = stepContent.text.toString())
+
                     viewModel.onSaveEditedStep(newStep)
                 }
                 parentFragmentManager.popBackStack()
@@ -112,8 +122,22 @@ class StepNewFragment: Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode != IMAGE_PICK_KEY || resultCode != Activity.RESULT_OK) return
         val picUri = data?.data
-        viewModel.setEditedStepsPicture(picUri)
+
+        val stepPicture = viewModel.getEditedStep()
+
+        if (stepPicture?.picture != "empty") {
+            viewModel.deleteEditedStepPicture()
+            viewModel.setEditedStepsPicture(picUri)
+        } else {
+            viewModel.setEditedStepsPicture(picUri)
+        }
         binding.stepPicture.setImageURI(picUri)
+        binding.pictureDeleteButton.isVisible = true
+        binding.pictureDeleteButton.setOnClickListener {
+            viewModel.deleteEditedStepPicture()
+            binding.stepPicture.setImageResource(androidx.transition.R.drawable.abc_ic_menu_selectall_mtrl_alpha)
+            binding.pictureDeleteButton.isVisible = false
+        }
 
         Log.d("onActivityResult-URI", data?.data.toString())
     }
@@ -130,14 +154,21 @@ class StepNewFragment: Fragment() {
                 .setNegativeButton("No, stay here"){ dialog, which ->
 
                 }.setPositiveButton("Yes, discard."){ dialog, which ->
+                    if ( pictureAdded ) viewModel.deleteEditedStepPicture()
+                    if (viewModel.tempBitMap != null) viewModel.saveTempBitmapToFile()
                     if ( viewModel.isNewStep && stepDiscard != null) viewModel.removeStep(stepDiscard)
+
+                    viewModel.clearEditedStep()
                     parentFragmentManager.popBackStack()
                 }.show()
         } else {
-            if ( viewModel.isNewStep && stepDiscard != null) viewModel.removeStep(stepDiscard)
+            if ( pictureAdded ) viewModel.deleteEditedStepPicture()
+            if (viewModel.tempBitMap != null) viewModel.saveTempBitmapToFile()
+            if (viewModel.isNewStep && stepDiscard != null) viewModel.removeStep(stepDiscard)
+
+            viewModel.clearEditedStep()
             parentFragmentManager.popBackStack()
         }
     }
-
 
 }

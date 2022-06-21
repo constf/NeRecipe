@@ -44,4 +44,15 @@
         android:tooltipText="Click to attach new picture"
         app:srcCompat = "@android:drawable/ic_menu_rotate"
         />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/picture_delete_button"
+        app:layout_constraintStart_toStartOf="@id/step_picture"
+        app:layout_constraintEnd_toEndOf="@id/step_picture"
+        app:layout_constraintTop_toBottomOf="@id/step_picture"
+        android:layout_height="45dp"
+        android:layout_width="wrap_content"
+        android:text="Delete picture"
+        android:visibility="invisible"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
