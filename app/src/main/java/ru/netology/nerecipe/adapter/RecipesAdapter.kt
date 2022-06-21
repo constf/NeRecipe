@@ -3,6 +3,7 @@ package ru.netology.nerecipe.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,7 @@ class RecipesAdapter(val helper: RecipesFeederHelper) : ListAdapter<Recipe, Reci
                 recepieName.text = item.name
                 authorName.text = item.author
                 categoryText.text = helper.getCategoryName(item.category) ?: "Error fetching the Category!"
+                if (item.isFavourite) imageLikeShow.isVisible = true
                 recipeCardContainer.setOnClickListener {
                     helper.onRecipeClicked(item)
                 }

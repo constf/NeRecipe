@@ -258,26 +258,6 @@ class RecipesViewModel(val inApplication: Application):
         saveStep(editStep!!)
     }
 
-    fun deleteDelayed() {
-        if (delayedPicture == null) return
-        if (editStep == null) return
-
-        val oldValue = editStep
-
-        if (delePictureOnGoBack){
-            editStep = editStep!!.copy(picture = delayedPicture!!)
-            deleteEditedStepPicture()
-        }
-        editStep = oldValue
-        delePictureOnGoBack = false
-        delayedPicture = null
-    }
-
-    fun setDelePictureDelayed() {
-        delePictureOnGoBack = true
-        delayedPicture = editStep?.picture
-    }
-
     fun saveTempBitmapToFile() {
         if (tempBitMap == null) return
         val step = editStep ?: return
@@ -302,6 +282,5 @@ class RecipesViewModel(val inApplication: Application):
         saveStep(editStep!!)
         tempBitMap = null
     }
-
 
 }

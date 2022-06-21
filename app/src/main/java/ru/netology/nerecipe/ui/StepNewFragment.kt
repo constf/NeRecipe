@@ -56,7 +56,6 @@ class StepNewFragment: Fragment() {
                 stepPicture.setImageBitmap(viewModel.tempBitMap)
                 binding.pictureDeleteButton.isVisible = true
                 binding.pictureDeleteButton.setOnClickListener {
-                    //viewModel.setDelePictureDelayed()
                     viewModel.deleteEditedStepPicture()
                     binding.stepPicture.setImageResource(androidx.transition.R.drawable.abc_ic_menu_selectall_mtrl_alpha)
                     binding.pictureDeleteButton.isVisible = false
@@ -99,11 +98,10 @@ class StepNewFragment: Fragment() {
                         return true
                     }
 
-
                     val stepId = viewModel.getEditedStep()?.id ?: return true
                     val newStep = viewModel.getStepById(stepId).copy(content = stepContent.text.toString())
-
                     viewModel.onSaveEditedStep(newStep)
+                    viewModel.tempBitMap = null
                 }
                 parentFragmentManager.popBackStack()
                 true
@@ -138,8 +136,6 @@ class StepNewFragment: Fragment() {
             binding.stepPicture.setImageResource(androidx.transition.R.drawable.abc_ic_menu_selectall_mtrl_alpha)
             binding.pictureDeleteButton.isVisible = false
         }
-
-        Log.d("onActivityResult-URI", data?.data.toString())
     }
 
 
