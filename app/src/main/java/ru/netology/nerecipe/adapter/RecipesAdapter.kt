@@ -12,7 +12,7 @@ import ru.netology.nerecipe.dto.Recipe
 import ru.netology.nerecipe.viewModel.RecipesFeederHelper
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
-class RecipesAdapter(val helper: RecipesFeederHelper) : ListAdapter<Recipe, RecipesAdapter.RecipeViewHolder>(RecipeDiffCallback) {
+class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: String) : ListAdapter<Recipe, RecipesAdapter.RecipeViewHolder>(RecipeDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -28,18 +28,25 @@ class RecipesAdapter(val helper: RecipesFeederHelper) : ListAdapter<Recipe, Reci
     inner class RecipeViewHolder(private val binding: RecipesDetailsBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Recipe?) {
             if (item == null) return
-            with (binding) {
+            with(binding) {
                 val catNumber = item.category
                 recepieName.text = item.name
                 authorName.text = item.author
-                categoryText.text = helper.getCategoryName(item.category) ?: "Error fetching the Category!"
+                categoryText.text =
+                    helper.getCategoryName(item.category) ?: "Error fetching the Category!"
                 if (item.isFavourite) imageLikeShow.isVisible = true
-                recipeCardContainer.setOnClickListener {
-                    helper.onRecipeClicked(item)
+
+                if (bindType == RECIPES_ADAPTER) { // if we show recipes scree
+                    recipeCardContainer.setOnClickListener {
+                        helper.onRecipeClicked(item)
+                    }
+                } else if (bindType == FAVOURITE_ADAPTER) { // if we show favourites screen
+                    recipeCardContainer.setOnClickListener {
+                        helper.onFavouriteClicked(item)
+                    }
                 }
             }
         }
-
     }
 
     private object RecipeDiffCallback:DiffUtil.ItemCallback<Recipe>(){
@@ -50,8 +57,11 @@ class RecipesAdapter(val helper: RecipesFeederHelper) : ListAdapter<Recipe, Reci
         override fun areContentsTheSame(oldItem: Recipe, newItem: Recipe): Boolean {
             return oldItem == newItem
         }
-
     }
 
+    companion object {
+        const val RECIPES_ADAPTER = ".recipes"
+        const val FAVOURITE_ADAPTER = ".favourite"
+    }
 
 }

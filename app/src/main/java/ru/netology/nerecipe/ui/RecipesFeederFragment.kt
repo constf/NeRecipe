@@ -2,11 +2,10 @@ package ru.netology.nerecipe.ui
 
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -26,16 +25,19 @@ class RecipesFeederFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
+            Toast.makeText(context, "Press BACK once more to exit the App!", Toast.LENGTH_LONG).show()
+            val exit = requireActivity().onBackPressedDispatcher.addCallback(){
+                requireActivity().finish()
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         _binding = FragmentRecipesFeederBinding.inflate(inflater, container, false)
 
-        val adapter = RecipesAdapter(viewModel)
+        val adapter = RecipesAdapter(viewModel, RecipesAdapter.RECIPES_ADAPTER)
         binding?.recipesList?.adapter = adapter
 
 

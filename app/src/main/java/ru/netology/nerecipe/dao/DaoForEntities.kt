@@ -11,6 +11,9 @@ interface RecipesDao {
             "WHERE categories.show_or_not = 1")
     fun getAllFilteredRecipes(): Flow<List<RecipeEntity>>
 
+    @Query("SELECT * FROM recipes")
+    fun getAllRecipes(): Flow<List<RecipeEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(newRecipe: RecipeEntity) : Long
 

@@ -51,8 +51,10 @@ class RecipesViewModel(val inApplication: Application):
     private val recipesRepo: RecipeRepository =
         RecipeRepositoryImplementation(AppDb.getInstance(inApplication).recipeDao)
     val recData by recipesRepo::data
+    val allRecipesData by recipesRepo::allData
     val recipeNamesFilter = SingleLiveEvent<String?>()
     val showRecipe = SingleLiveEvent<Recipe?>()
+    val favouriteRecipe = SingleLiveEvent<Recipe?>()
     val editRecipe = SingleLiveEvent<Recipe?>()
     fun saveRecipe(recipe: Recipe) = recipesRepo.save(recipe)
     fun deleteRecipe(recipe: Recipe) = recipesRepo.remove(recipe.id)
@@ -170,6 +172,10 @@ class RecipesViewModel(val inApplication: Application):
     // Helper interface methods for use in RW adapter
     override fun onRecipeClicked(recipe: Recipe?) {
         showRecipe.value = recipe
+    }
+
+    override fun onFavouriteClicked(recipe: Recipe?) {
+        favouriteRecipe.value = recipe
     }
 
     override fun getCategoryName(id: Long) = getCatNameId(id)

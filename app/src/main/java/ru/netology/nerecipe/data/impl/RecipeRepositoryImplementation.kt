@@ -17,6 +17,11 @@ class RecipeRepositoryImplementation(private val dao: RecipesDao): RecipeReposit
         recList.map { it.toModel() }
     }
 
+    override val allData: LiveData<List<Recipe>> = dao.getAllRecipes().asLiveData().map { recList ->
+        recList.map{ it.toModel() }
+    }
+
+
     override fun save(recipe: Recipe): Long {
         return dao.insert(recipe.toEntity())
     }
