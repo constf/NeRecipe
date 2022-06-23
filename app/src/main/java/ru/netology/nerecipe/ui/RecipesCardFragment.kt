@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -58,29 +59,33 @@ class RecipesCardFragment : Fragment() {
             adapter.submitList(steps.filter { it.recipeId == recipe.id })
         }
 
-        binding?.imageMore?.setOnClickListener {
-            PopupMenu(it.context, it).apply {
-                inflate(R.menu.recipe_card_more)
-                setOnMenuItemClickListener { item ->
-                    when (item.itemId) {
-                        R.id.recipe_edit -> {
-                            viewModel.onEditRecipe(recipe)
-                            true
+        if (!viewModel.isFavouriteShow) {
+            binding?.imageMore?.setOnClickListener {
+                PopupMenu(it.context, it).apply {
+                    inflate(R.menu.recipe_card_more)
+                    setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            R.id.recipe_edit -> {
+                                viewModel.onEditRecipe(recipe)
+                                true
+                            }
+                            R.id.recipe_remove -> {
+                                MaterialAlertDialogBuilder(it.context)
+                                    .setMessage("Are you sure to delete this Recipe with descriptions?")
+                                    .setNegativeButton("No, let it stay") { dialog, which -> }
+                                    .setPositiveButton("Yes, delete!") { dialog, which ->
+                                        viewModel.deleteRecipe(recipe)
+                                        parentFragmentManager.popBackStack()
+                                    }.show()
+                                true
+                            }
+                            else -> false
                         }
-                        R.id.recipe_remove -> {
-                            MaterialAlertDialogBuilder(it.context)
-                                .setMessage("Are you sure to delete this Recipe with descriptions?")
-                                .setNegativeButton("No, let it stay"){ dialog, which -> }
-                                .setPositiveButton("Yes, delete!"){ dialog, which ->
-                                    viewModel.deleteRecipe(recipe)
-                                    parentFragmentManager.popBackStack()
-                                }.show()
-                            true
-                        }
-                        else -> false
                     }
-                }
-            }.show()
+                }.show()
+            }
+        } else {
+            binding?.imageMore?.isVisible = false
         }
 
         viewModel.editRecipe.observe(viewLifecycleOwner) { recipe ->

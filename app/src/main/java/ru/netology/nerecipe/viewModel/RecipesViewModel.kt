@@ -30,6 +30,7 @@ const val NEW_ITEM_ID = 0L
 class RecipesViewModel(val inApplication: Application):
     AndroidViewModel(inApplication), RecipesFeederHelper, StepsDetailsHelper {
 
+
     var tempBitMap: Bitmap? = null
     private var delayedPicture: String? = null
     var delePictureOnGoBack: Boolean = false
@@ -39,6 +40,7 @@ class RecipesViewModel(val inApplication: Application):
     var isNewRecipe: Boolean = false
     var isNewStep: Boolean = false
     var selectedSpinner: String? = "empty"
+    var isFavouriteShow: Boolean = false
 
     // Categories data section
     private val categoriesRepo: CategoryRepository =
@@ -56,6 +58,7 @@ class RecipesViewModel(val inApplication: Application):
     val showRecipe = SingleLiveEvent<Recipe?>()
     val favouriteRecipe = SingleLiveEvent<Recipe?>()
     val editRecipe = SingleLiveEvent<Recipe?>()
+    var tempRecipe: Recipe? = null
     fun saveRecipe(recipe: Recipe) = recipesRepo.save(recipe)
     fun deleteRecipe(recipe: Recipe) = recipesRepo.remove(recipe.id)
 
@@ -67,7 +70,7 @@ class RecipesViewModel(val inApplication: Application):
     private var editStep: RecipeStep? = null
     private var editedStepsCount = 1L
     var stepUri: Uri? = null
-
+    //var stepIdsList: MutableList<Long> = mutableListOf<Long>()
 
     fun saveStep(step: RecipeStep) = recStepsRepo.save(step)
     fun removeStep(step: RecipeStep) = recStepsRepo.remove(step.id)
@@ -187,6 +190,7 @@ class RecipesViewModel(val inApplication: Application):
         isNewStep = true
         val stepId = saveStep(step)
         editStep = step.copy(id = stepId)
+        //stepIdsList.add(stepId)
         navigateToNewStepEdit.call()
     }
 
@@ -195,8 +199,19 @@ class RecipesViewModel(val inApplication: Application):
         editStep = step
         deleteEditedStepPicture()
         recStepsRepo.remove(step.id)
+
+        //stepIdsList = stepIdsList.filter { it != step.id }.toMutableList()
+
         editStep = oldvalue
     }
+
+//    fun deleteUnsavedSteps(){
+//        stepIdsList.forEach { delId ->
+//            recStepsRepo.remove(delId)
+//        }
+//        stepIdsList.clear()
+//    }
+
 
     fun setFavourite(id: Long, favourite: Boolean) {
         recipesRepo.setFavourite(id, favourite)
@@ -212,6 +227,7 @@ class RecipesViewModel(val inApplication: Application):
         }
 
         editRecipe.value = null
+        tempRecipe = null
     }
 
     fun getCatIdbyName(category: String?): Long? {

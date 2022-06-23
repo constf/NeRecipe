@@ -40,6 +40,7 @@ class RecipesFeederFragment : Fragment() {
         val adapter = RecipesAdapter(viewModel, RecipesAdapter.RECIPES_ADAPTER)
         binding?.recipesList?.adapter = adapter
 
+        viewModel.isFavouriteShow = false
 
         viewModel.catData.observe(viewLifecycleOwner){
             viewModel.initCategories()
@@ -96,6 +97,13 @@ class RecipesFeederFragment : Fragment() {
         }
         viewModel.editRecipe.observe(viewLifecycleOwner) { recipe ->
             if (recipe == null) return@observe
+            parentFragmentManager.commit {
+                addToBackStack("RecipesFeeder")
+                replace(R.id.app_fragment_container, RecipeNewFragment())
+            }
+        }
+
+        if (viewModel.tempRecipe != null && viewModel.editRecipe.value != null){
             parentFragmentManager.commit {
                 addToBackStack("RecipesFeeder")
                 replace(R.id.app_fragment_container, RecipeNewFragment())

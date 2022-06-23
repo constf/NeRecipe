@@ -8,9 +8,13 @@ import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.doOnDetach
+import androidx.core.view.doOnNextLayout
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
@@ -104,11 +108,20 @@ class RecipeNewFragment :
 
         // Initializing the View fileds
         val recipe = viewModel.getEditedRecipe() ?: return binding?.root
+        var selectedSpinner = viewModel.getCategoryName(recipe.category) ?: "No category set"
 
-        binding?.recipeName?.setText(recipe.name)
-        binding?.authorName?.setText(recipe.author)
-        binding?.imageFavourite?.isChecked = recipe.isFavourite
-        val selectedSpinner = viewModel.getCategoryName(recipe.category) ?: "No category set"
+        if (viewModel.tempRecipe == null) {
+            binding?.recipeName?.setText(recipe.name)
+            binding?.authorName?.setText(recipe.author)
+            binding?.imageFavourite?.isChecked = recipe.isFavourite
+            viewModel.tempRecipe = recipe.copy()
+        } else {
+            val tr = viewModel.tempRecipe
+            binding?.recipeName?.setText(tr?.name)
+            binding?.authorName?.setText(tr?.author)
+            binding?.imageFavourite?.isChecked = tr!!.isFavourite
+            selectedSpinner = viewModel.getCategoryName(tr.category) ?: "No category set"
+        }
 
         requireActivity().setTitle(
             if ( recipe.name.isBlank() || recipe.name.isEmpty() )
@@ -154,11 +167,25 @@ class RecipeNewFragment :
             }
         }
 
+        binding?.authorName?.doOnTextChanged { text, start, before, count ->
+            val selectedSpinner = viewModel.selectedSpinner
+            val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
+          viewModel.tempRecipe = viewModel.tempRecipe?.copy(author = text.toString(), category = catId) ?: Recipe(NEW_ITEM_ID, author = text.toString(), name = "", category = catId, isFavourite = false )
+        }
+        binding?.recipeName?.doOnTextChanged { text, start, before, count ->
+            val selectedSpinner = viewModel.selectedSpinner
+            val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
+            viewModel.tempRecipe = viewModel.tempRecipe?.copy(name = text.toString(), category = catId) ?: Recipe(NEW_ITEM_ID, name = text.toString(), author = "", category = catId, isFavourite = false )
+        }
+
         return binding?.root
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
         viewModel.selectedSpinner = parent?.getItemAtPosition(pos) as String
+        val selectedSpinner = viewModel.selectedSpinner
+        val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
+        viewModel.tempRecipe = viewModel.tempRecipe?.copy(category = catId) ?: Recipe(NEW_ITEM_ID, name = "", author = "", category = catId, isFavourite = false)
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -181,20 +208,25 @@ class RecipeNewFragment :
         val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
         val catChanged = viewModel.getEditedRecipe()?.category != catId
         val recipeDiscard = viewModel.getEditedRecipe()
+        //val addedSteps = viewModel.stepIdsList.size > 0
 
-        if (!nameIsSame || !authorIsSame || catChanged) {
+        if (!nameIsSame || !authorIsSame || catChanged ) {
             MaterialAlertDialogBuilder(requireContext())
                 .setMessage("Are you sure to discard the changes?")
                 .setNegativeButton("No, stay here"){ dialog, which ->
 
                 }.setPositiveButton("Yes, discard."){ dialog, which ->
+                    //viewModel.deleteUnsavedSteps()
                     if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
                     setTitlebarNameOnBack()
+                    viewModel.tempRecipe = null
                     parentFragmentManager.popBackStack()
                 }.show()
         } else {
+            //viewModel.deleteUnsavedSteps()
             if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
             setTitlebarNameOnBack()
+            viewModel.tempRecipe = null
             parentFragmentManager.popBackStack()
         }
     }
@@ -205,6 +237,4 @@ class RecipeNewFragment :
         const val RESULT_KEY = ".EDIT RESULT"
         const val RESULT_VALUE = ".EDITED OK"
     }
-
-
 }

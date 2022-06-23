@@ -146,22 +146,27 @@ class StepNewFragment: Fragment() {
 
         if (!textSame || pictureAdded) {
             MaterialAlertDialogBuilder(requireContext())
-                .setMessage("Are you sure to discard the changes?")
+                .setMessage("Are you sure to discard the changes? This action can NOT be restored!")
                 .setNegativeButton("No, stay here"){ dialog, which ->
 
                 }.setPositiveButton("Yes, discard."){ dialog, which ->
                     if ( pictureAdded ) viewModel.deleteEditedStepPicture()
                     if (viewModel.tempBitMap != null) viewModel.saveTempBitmapToFile()
-                    if ( viewModel.isNewStep && stepDiscard != null) viewModel.removeStep(stepDiscard)
+                    if ( viewModel.isNewStep && stepDiscard != null){
+                        viewModel.removeStep(stepDiscard)
+                        //viewModel.stepIdsList = viewModel.stepIdsList.filter { it != stepDiscard.id }.toMutableList()
+                    }
 
                     viewModel.clearEditedStep()
                     parentFragmentManager.popBackStack()
                 }.show()
         } else {
-            if ( pictureAdded ) viewModel.deleteEditedStepPicture()
+             if ( pictureAdded ) viewModel.deleteEditedStepPicture()
             if (viewModel.tempBitMap != null) viewModel.saveTempBitmapToFile()
-            if (viewModel.isNewStep && stepDiscard != null) viewModel.removeStep(stepDiscard)
-
+            if (viewModel.isNewStep && stepDiscard != null){
+                viewModel.removeStep(stepDiscard)
+                //viewModel.stepIdsList = viewModel.stepIdsList.filter { it != stepDiscard.id }.toMutableList()
+            }
             viewModel.clearEditedStep()
             parentFragmentManager.popBackStack()
         }

@@ -38,6 +38,8 @@ class FavouriteFeederFragment : Fragment() {
         val adapter = RecipesAdapter(viewModel, RecipesAdapter.RECIPES_ADAPTER)
         binding?.recipesList?.adapter = adapter
 
+        viewModel.isFavouriteShow = true
+
         viewModel.allRecipesData.observe(viewLifecycleOwner) { recipes ->
             adapter.submitList(recipes.filter{ it.isFavourite })
         }
