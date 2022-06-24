@@ -21,6 +21,10 @@ class CategoryRepositoryImplementation(private val dao: CategoryDao): CategoryRe
         }
     }
 
+    override fun getNumberOfSelectedCategories(): Int {
+        return dao.getNumberOfSelectedCategories()
+    }
+
     override fun getIdByName(category: String?): Long? {
         return dao.getIdByName(category)
     }

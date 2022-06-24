@@ -88,5 +88,8 @@ interface CategoryDao {
 
     @Query("SELECT id_cat FROM categories WHERE name_cat = :category")
     fun getIdByName(category: String?): Long?
+
+    @Query("SELECT COUNT(*) FROM categories WHERE show_or_not = 1")
+    fun getNumberOfSelectedCategories(): Int
 }
 

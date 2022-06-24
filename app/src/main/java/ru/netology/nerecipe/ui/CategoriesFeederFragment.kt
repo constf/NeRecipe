@@ -32,7 +32,7 @@ class CategoriesFeederFragment: Fragment() {
     ): View? {
         _binding = FragmentCategoriesFeederBinding.inflate(inflater)
 
-        val adapter = CategoriesAdapter()
+        val adapter = CategoriesAdapter(viewModel)
         binding?.categoriesList?.adapter = adapter
 
         viewModel.catData.observe(viewLifecycleOwner){ categories ->

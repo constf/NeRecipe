@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_item_recipes_list -> { // Opens the first and main screen
                     binding.bottomNavBar.menu.getItem(0).setChecked(true)
                     supportFragmentManager.commit {
+                        addToBackStack(null)
                         replace(R.id.app_fragment_container, RecipesFeederFragment(), RecipesFeederFragment.TAG)
                     }
                     true
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_item_favourite_list -> { // Opens the screen with favourite recipes
                     binding.bottomNavBar.menu.getItem(1).setChecked(true)
                     supportFragmentManager.commit {
+                        addToBackStack(null)
                         replace(R.id.app_fragment_container, FavouriteFeederFragment(), FavouriteFeederFragment.TAG)
                     }
                     true
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_item_filter_list -> { // Opens the screen with categories to see and choose
                     binding.bottomNavBar.menu.getItem(2).setChecked(true)
                     supportFragmentManager.commit {
+                        addToBackStack(null)
                         replace(R.id.app_fragment_container, CategoriesFeederFragment(), CategoriesFeederFragment.TAG)
                     }
                     true

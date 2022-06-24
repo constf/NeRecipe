@@ -14,4 +14,6 @@ interface CategoryRepository {
 
     fun getName(getId: Long): String?
     fun getIdByName(category: String?): Long?
+
+    fun getNumberOfSelectedCategories(): Int
 }

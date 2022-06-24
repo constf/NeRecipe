@@ -28,7 +28,7 @@ import java.io.OutputStream
 const val NEW_ITEM_ID = 0L
 
 class RecipesViewModel(val inApplication: Application):
-    AndroidViewModel(inApplication), RecipesFeederHelper, StepsDetailsHelper {
+    AndroidViewModel(inApplication), RecipesFeederHelper, StepsDetailsHelper, CategoriesHelper {
 
 
     var tempBitMap: Bitmap? = null
@@ -205,7 +205,19 @@ class RecipesViewModel(val inApplication: Application):
         editStep = oldvalue
     }
 
-//    fun deleteUnsavedSteps(){
+    override fun getNumberOfSelectedCategories(): Int {
+        return categoriesRepo.getNumberOfSelectedCategories()
+    }
+
+    override fun setCetegoryVisible(id: Long) {
+        categoriesRepo.setVisible(id)
+    }
+
+    override fun setCetegoryInvisible(id: Long) {
+        categoriesRepo.setNotVisible(id)
+    }
+
+    //    fun deleteUnsavedSteps(){
 //        stepIdsList.forEach { delId ->
 //            recStepsRepo.remove(delId)
 //        }

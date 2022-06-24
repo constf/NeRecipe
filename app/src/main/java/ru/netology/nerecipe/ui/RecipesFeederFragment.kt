@@ -42,6 +42,11 @@ class RecipesFeederFragment : Fragment() {
 
         viewModel.isFavouriteShow = false
 
+        // set the filter string
+        val filter = if (viewModel.recipeNamesFilter.value.isNullOrEmpty()) ""
+                     else  viewModel.recipeNamesFilter.value
+        binding?.recipeNameFilterEdit?.setText(filter)
+
         viewModel.catData.observe(viewLifecycleOwner){
             viewModel.initCategories()
         }
