@@ -184,6 +184,19 @@ class RecipesViewModel(val inApplication: Application):
     override fun getCategoryName(id: Long) = getCatNameId(id)
 
 
+    override fun exchangeTwoRecipes(oldRecipe: Recipe?, targetRecipe: Recipe?) {
+        if (oldRecipe == null) return
+        if (targetRecipe == null) return
+
+        val targetRecipeNew = targetRecipe.copy(id = oldRecipe.id)
+        val oldRecipeNew = oldRecipe.copy(id = targetRecipe.id)
+
+        saveRecipe(targetRecipeNew)
+        saveRecipe(oldRecipeNew)
+
+        // TODO: change steps as well!
+    }
+
     fun addNewEditedStep() {
         val recId = editRecipe.value?.id ?: return
         val step: RecipeStep = RecipeStep(NEW_ITEM_ID, recId, "")

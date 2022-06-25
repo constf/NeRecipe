@@ -36,9 +36,16 @@ class RecipesFeederFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         _binding = FragmentRecipesFeederBinding.inflate(inflater, container, false)
+        if (binding == null) return super.onCreateView(inflater, container, savedInstanceState)
 
         val adapter = RecipesAdapter(viewModel, RecipesAdapter.RECIPES_ADAPTER)
+
         binding?.recipesList?.adapter = adapter
+        val rw = binding?.recipesList ?: return binding?.root
+        adapter.attachRecyclerView(rw)
+
+
+
 
         viewModel.isFavouriteShow = false
 
@@ -122,3 +129,4 @@ class RecipesFeederFragment : Fragment() {
         const val TAG = "RecipesFeederFragment"
     }
 }
+
