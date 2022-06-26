@@ -111,15 +111,12 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
 
             val oldRecipe= adapter.getItem(dragFrom) ?: return
             val targetRecipe = adapter.getItem(dragTo) ?: return
-            //helper.exchangeTwoRecipes(oldRecipe, targetRecipe)
+
             val list = adapter.currentList
-            //adapter.notifyDataSetChanged()
-            val minIndex = kotlin.math.min(dragFrom, dragTo)
-            val maxIndex = max(dragFrom, dragTo)
-            //helper.updateRepoWithNewListFromTo(list, minIndex, maxIndex)
+
+            helper.updateRepoWithNewListFromTo(list, dragFrom, dragTo)
 
             dragFrom = -1; dragTo = -1;
-
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

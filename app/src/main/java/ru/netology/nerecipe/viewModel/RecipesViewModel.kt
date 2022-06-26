@@ -24,6 +24,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
+import kotlin.math.max
+import kotlin.math.min
 
 const val NEW_ITEM_ID = 0L
 
@@ -195,6 +197,71 @@ class RecipesViewModel(val inApplication: Application):
         saveRecipe(oldRecipeNew)
 
         // TODO: change steps as well!
+    }
+
+    override fun updateRepoWithNewListFromTo(list: List<Recipe>, dragFrom: Int, dragTo: Int): Boolean {
+
+        val upDownMovement = dragFrom < dragTo
+        val downUpMovement = dragFrom > dragTo
+
+        val minIndex = min(dragFrom, dragTo)
+        val maxIndex = max(dragFrom, dragTo)
+        val rwSubList = list.subList(minIndex, maxIndex+1)
+        val inListIds = rwSubList.map { it.id }.sorted() //order of IDs in db
+
+        if (inListIds.size != rwSubList.size) return false
+
+        val updatedList = mutableListOf<Recipe>()
+
+        if (upDownMovement) {
+            val rwlSize = rwSubList.size
+            val firstToLast = rwSubList[0]
+            rwSubList.forEachIndexed { index, recipe ->
+                if (index == rwlSize-1){
+                    updatedList.add(firstToLast)
+                } else {
+                    updatedList.add(rwSubList[index+1])
+                }
+            }
+        }
+
+        if (downUpMovement) {
+            val rwlSize = rwSubList.size
+            val lastToFirst = rwSubList[rwlSize-1]
+            rwSubList.forEachIndexed { index, recipe ->
+                if (index == 0){
+                    updatedList.add(lastToFirst)
+                }else{
+                    updatedList.add(rwSubList[index-1])
+                }
+            }
+        }
+
+        // get recipes steps list of lists, to avoid cyclic re-write of recipie id into the step!
+        // here, it is the same order of index as in the next "forEach"
+        val listOfLists: MutableList<List<RecipeStep>> = mutableListOf()
+        updatedList.forEach { rwRecipe ->
+            listOfLists.add(recStepsRepo.getStepsListWithRecId(rwRecipe.id) ?: emptyList())
+        }
+
+        // now, save new order in DB
+        updatedList.forEachIndexed { index, rwRecipe ->
+            val rec = getRecipeById(inListIds[index]) ?: return false // get the current item from DB with this ID
+            val updatedRec = rwRecipe.copy(id = rec.id)
+            recipesRepo.update(updatedRec)
+
+            val stepsList = listOfLists[index]
+            stepsList.forEach { step ->
+                val updatedStep = step.copy(recipeId = updatedRec.id)
+                recStepsRepo.updateStep(updatedStep)
+            }
+        }
+
+        return true
+    }
+
+    fun updateRecIdForStep(oldId: Long, newId: Long) {
+        recStepsRepo.update(oldId, newId)
     }
 
     fun addNewEditedStep() {

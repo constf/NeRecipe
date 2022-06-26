@@ -11,4 +11,5 @@ interface RecipeRepository {
     fun remove(id: Long)
     fun setFavourite(id: Long, favourite: Boolean)
     fun getRecipeById(getId: Long): Recipe
+    fun update(recipe: Recipe): Int
 }

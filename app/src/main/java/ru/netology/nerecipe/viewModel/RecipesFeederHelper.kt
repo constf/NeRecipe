@@ -7,4 +7,5 @@ interface RecipesFeederHelper {
     fun getCategoryName(id: Long): String?
     fun onFavouriteClicked(recipe: Recipe?)
     fun exchangeTwoRecipes(oldRecipe: Recipe?, targetRecipe: Recipe?)
+    fun updateRepoWithNewListFromTo(list: List<Recipe>, dragFrom: Int, dragTo: Int): Boolean
 }

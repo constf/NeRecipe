@@ -38,6 +38,10 @@ class RecipeRepositoryImplementation(private val dao: RecipesDao): RecipeReposit
         return dao.getRecipeById(getId).toModel()
     }
 
+    override fun update(recipe: Recipe): Int {
+        return dao.updateExistingRecipe(recipe.toEntity())
+    }
+
     fun get(getId: Long): Recipe? {
         val rec = recipes.find { it.id == getId }
         return rec
