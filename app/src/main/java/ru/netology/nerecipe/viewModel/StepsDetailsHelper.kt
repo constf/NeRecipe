@@ -10,4 +10,5 @@ interface StepsDetailsHelper {
     fun updateStep(step: RecipeStep)
     fun editStep(step: RecipeStep)
     fun getBitmapFromFile(name: String): Bitmap?
+    fun updateStepsRepoWithListFromTo(list: List<RecipeStep>, dragFrom: Int, dragTo: Int)
 }

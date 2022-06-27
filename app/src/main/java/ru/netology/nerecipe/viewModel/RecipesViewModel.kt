@@ -186,19 +186,6 @@ class RecipesViewModel(val inApplication: Application):
     override fun getCategoryName(id: Long) = getCatNameId(id)
 
 
-    override fun exchangeTwoRecipes(oldRecipe: Recipe?, targetRecipe: Recipe?) {
-        if (oldRecipe == null) return
-        if (targetRecipe == null) return
-
-        val targetRecipeNew = targetRecipe.copy(id = oldRecipe.id)
-        val oldRecipeNew = oldRecipe.copy(id = targetRecipe.id)
-
-        saveRecipe(targetRecipeNew)
-        saveRecipe(oldRecipeNew)
-
-        // TODO: change steps as well!
-    }
-
     override fun updateRepoWithNewListFromTo(list: List<Recipe>, dragFrom: Int, dragTo: Int): Boolean {
 
         val upDownMovement = dragFrom < dragTo
@@ -258,6 +245,52 @@ class RecipesViewModel(val inApplication: Application):
         }
 
         return true
+    }
+
+    override fun updateStepsRepoWithListFromTo(list: List<RecipeStep>, dragFrom: Int, dragTo: Int) {
+
+        val upDownMovement = dragFrom < dragTo
+        val downUpMovement = dragFrom > dragTo
+
+        val minIndex = min(dragFrom, dragTo)
+        val maxIndex = max(dragFrom, dragTo)
+        val rwSubList = list.subList(minIndex, maxIndex+1)
+        val inListIds = rwSubList.map { it.id }.sorted() //order of IDs in db
+
+        if (inListIds.size != rwSubList.size) return
+
+        val updatedList = mutableListOf<RecipeStep>()
+
+        if (upDownMovement) {
+            val rwlSize = rwSubList.size
+            val firstToLast = rwSubList[0]
+            rwSubList.forEachIndexed { index, recipe ->
+                if (index == rwlSize-1){
+                    updatedList.add(firstToLast)
+                } else {
+                    updatedList.add(rwSubList[index+1])
+                }
+            }
+        }
+
+        if (downUpMovement) {
+            val rwlSize = rwSubList.size
+            val lastToFirst = rwSubList[rwlSize-1]
+            rwSubList.forEachIndexed { index, recipe ->
+                if (index == 0){
+                    updatedList.add(lastToFirst)
+                }else{
+                    updatedList.add(rwSubList[index-1])
+                }
+            }
+        }
+
+        updatedList.forEachIndexed { index, rwStep ->
+            val step = getStepById(inListIds[index]) ?: return // get the current item from DB with this ID
+            val updatedStep = rwStep.copy(id = step.id)
+            recStepsRepo.updateStep(updatedStep)
+        }
+
     }
 
     fun updateRecIdForStep(oldId: Long, newId: Long) {

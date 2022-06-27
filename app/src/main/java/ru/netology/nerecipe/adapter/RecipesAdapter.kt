@@ -123,5 +123,7 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
 
         }
     }
+
+
 }
 

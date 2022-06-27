@@ -11,6 +11,7 @@ import androidx.core.view.doOnDetach
 import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -23,6 +24,9 @@ import ru.netology.nerecipe.viewModel.StepsDetailsHelper
 
 class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType: String)
     : ListAdapter<RecipeStep, StepsAdapter.StepViewHolder>(StepsDiffCallback) {
+
+    private var helperCallback = StepsHelperCallback()
+    private val mTouchHelper = ItemTouchHelper(helperCallback)
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StepViewHolder {
@@ -41,6 +45,11 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
         }
     }
 
+    fun attachRecyclerView(rw: RecyclerView){
+        mTouchHelper.attachToRecyclerView(rw)
+        val en = helperCallback.isLongPressDragEnabled
+        val ch = en
+    }
 
 
     inner class StepViewHolder(private val binding: StepDetailsShowBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -124,4 +133,48 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
         const val SHOW_ADAPTER = ".show"
         const val EDIT_ADAPTER = ".edit"
     }
+
+
+    inner class StepsHelperCallback: ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
+
+        var dragFrom: Int = -1
+        var dragTo: Int = -1
+
+        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+            val fromPosition = viewHolder.bindingAdapterPosition
+            val toPosition = target.bindingAdapterPosition
+
+            val adapter: StepsAdapter = recyclerView.adapter as StepsAdapter
+            adapter.notifyItemMoved(fromPosition, toPosition)
+
+            if (dragFrom == -1) dragFrom = fromPosition
+            dragTo = toPosition
+
+            return true
+        }
+
+
+        override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
+            super.clearView(recyclerView, viewHolder)
+
+            if (dragFrom == -1 || dragTo == -1 || dragFrom == dragTo) return
+
+            val adapter: StepsAdapter = recyclerView.adapter as StepsAdapter
+
+            val oldRecipe= adapter.getItem(dragFrom) ?: return
+            val targetRecipe = adapter.getItem(dragTo) ?: return
+
+            val list = adapter.currentList
+
+            helper.updateStepsRepoWithListFromTo(list, dragFrom, dragTo)
+
+            dragFrom = -1; dragTo = -1;
+        }
+
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+
+        }
+    }
+
 }

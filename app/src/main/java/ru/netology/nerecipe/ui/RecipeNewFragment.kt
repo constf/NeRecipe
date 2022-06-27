@@ -150,6 +150,9 @@ class RecipeNewFragment :
         val adapter = StepsAdapter(viewModel, StepsAdapter.EDIT_ADAPTER)
         binding?.stepsListNew?.adapter = adapter
 
+        val rw = binding?.stepsListNew ?: return binding?.root
+        adapter.attachRecyclerView(rw)
+
         viewModel.stepsFilteredData.observe(viewLifecycleOwner) { steps ->
             adapter.submitList(steps.filter { it.recipeId == recipe.id })
         }
