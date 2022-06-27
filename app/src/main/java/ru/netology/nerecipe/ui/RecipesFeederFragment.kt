@@ -21,6 +21,7 @@ class RecipesFeederFragment : Fragment() {
     private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
     private var _binding: FragmentRecipesFeederBinding? = null
     private val binding get() = _binding
+    private var isEmptyState: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,8 +59,17 @@ class RecipesFeederFragment : Fragment() {
             viewModel.initCategories()
         }
 
+
+        //showEmptyState()
+
         // Submit the list of recipes for the RW with the account of possible applied filter
         viewModel.recData.observe(viewLifecycleOwner) { recipes ->
+
+            if (recipes.size == 0)
+                showEmptyState()
+            else
+                if (isEmptyState) hideEmptyState()
+
             val filter = viewModel.recipeNamesFilter.value
             if ( filter.isNullOrEmpty() ){
                 adapter.submitList(recipes) // No filter applied
@@ -124,6 +134,35 @@ class RecipesFeederFragment : Fragment() {
 
         return binding?.root
     }
+
+    private fun showEmptyState() {
+        if (binding == null) return
+        with(binding!!) {
+            // Hide RW and filter edit field
+            recipesList.visibility = View.GONE
+            recipeNameFilterEdit.visibility = View.GONE
+
+            // SHow Empty State pic and text
+            emptyStatePicture.visibility = View.VISIBLE
+            emptyStateText.visibility = View.VISIBLE
+        }
+        isEmptyState = true
+    }
+
+    private fun hideEmptyState() {
+        if (binding == null) return
+        with(binding!!) {
+            // Show RW and filter edit field
+            recipesList.visibility = View.VISIBLE
+            recipeNameFilterEdit.visibility = View.VISIBLE
+
+            // Hide Empty State pic and text
+            emptyStatePicture.visibility = View.GONE
+            emptyStateText.visibility = View.GONE
+        }
+        isEmptyState = false
+    }
+
 
     companion object {
         const val TAG = "RecipesFeederFragment"
