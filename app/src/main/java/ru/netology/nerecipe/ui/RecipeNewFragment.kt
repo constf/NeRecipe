@@ -55,8 +55,11 @@ class RecipeNewFragment :
         return when(item.itemId) {
             R.id.recipe_new_options_save -> {
                 with(binding!!){
-                    if (recipeName.text.toString().isNullOrBlank() || authorName.text.toString().isNullOrBlank()){
-                        Toast.makeText(context, "Recipe name and Author name can not be empty!", Toast.LENGTH_SHORT)
+                    val curEditRecipe = viewModel.getEditedRecipe() ?: return false
+                    val stepsList = viewModel.stepsFilteredData.value?.filter { it.recipeId == curEditRecipe.id }
+
+                    if (recipeName.text.toString().isNullOrBlank() || authorName.text.toString().isNullOrBlank() || stepsList?.size == 0){
+                        Toast.makeText(context, "Recipe name and Author name, or Steps list can not be empty!", Toast.LENGTH_SHORT)
                             .also { it.setGravity(Gravity.CENTER_VERTICAL, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT) }
                             .show()
                         return true

@@ -109,9 +109,6 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
 
             val adapter: RecipesAdapter = recyclerView.adapter as RecipesAdapter
 
-            val oldRecipe= adapter.getItem(dragFrom) ?: return
-            val targetRecipe = adapter.getItem(dragTo) ?: return
-
             val list = adapter.currentList
 
             helper.updateRepoWithNewListFromTo(list, dragFrom, dragTo)

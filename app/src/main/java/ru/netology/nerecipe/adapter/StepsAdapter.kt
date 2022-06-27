@@ -162,9 +162,6 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
 
             val adapter: StepsAdapter = recyclerView.adapter as StepsAdapter
 
-            val oldRecipe= adapter.getItem(dragFrom) ?: return
-            val targetRecipe = adapter.getItem(dragTo) ?: return
-
             val list = adapter.currentList
 
             helper.updateStepsRepoWithListFromTo(list, dragFrom, dragTo)
