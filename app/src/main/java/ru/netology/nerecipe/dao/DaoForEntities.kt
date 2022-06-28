@@ -11,8 +11,23 @@ interface RecipesDao {
             "WHERE categories.show_or_not = 1")
     fun getAllFilteredRecipes(): Flow<List<RecipeEntity>>
 
+    @Query("SELECT * FROM recipes " +
+            "INNER JOIN categories ON categories.id_cat = recipes.category " +
+            "WHERE categories.show_or_not = 1")
+    fun listAllFilteredRecipes(): List<RecipeEntity>
+
+
+
     @Query("SELECT * FROM recipes")
     fun getAllRecipes(): Flow<List<RecipeEntity>>
+
+    @Query("SELECT * FROM recipes")
+    fun listAllRecipes(): List<RecipeEntity>
+
+
+    @Query("SELECT * FROM recipes " +
+            "WHERE id_rec IN (:ids)")
+    fun getRecipesList(ids: List<Long>): List<RecipeEntity> // for test purposes
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(newRecipe: RecipeEntity) : Long
@@ -26,6 +41,9 @@ interface RecipesDao {
 
     @Query("DELETE FROM recipes WHERE id_rec = :remId")
     fun removeById(remId: Long)
+
+    @Query("DELETE FROM recipes")
+    fun clearAll()
 
     @Query("UPDATE recipes SET " +
             "is_favourite_rec = CASE WHEN :favourite THEN 1 ELSE 0 END " +
@@ -86,6 +104,9 @@ interface CategoryDao {
 
     @Query("DELETE FROM categories WHERE id_cat = :remId")
     fun removeById(remId: Long)
+
+    @Query("DELETE FROM categories")
+    fun deleteAllCategories()
 
     @Query("UPDATE categories SET show_or_not = 1 WHERE id_cat = :id")
     fun setVisible(id: Long)

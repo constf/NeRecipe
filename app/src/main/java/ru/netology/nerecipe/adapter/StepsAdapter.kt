@@ -136,7 +136,7 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
 
 
     inner class StepsHelperCallback: ItemTouchHelper.SimpleCallback(
-        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT){
 
         var dragFrom: Int = -1
         var dragTo: Int = -1

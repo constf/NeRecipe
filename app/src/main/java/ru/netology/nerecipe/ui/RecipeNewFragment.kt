@@ -176,7 +176,7 @@ class RecipeNewFragment :
         binding?.authorName?.doOnTextChanged { text, start, before, count ->
             val selectedSpinner = viewModel.selectedSpinner
             val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
-          viewModel.tempRecipe = viewModel.tempRecipe?.copy(author = text.toString(), category = catId) ?: Recipe(NEW_ITEM_ID, author = text.toString(), name = "", category = catId, isFavourite = false )
+            viewModel.tempRecipe = viewModel.tempRecipe?.copy(author = text.toString(), category = catId) ?: Recipe(NEW_ITEM_ID, author = text.toString(), name = "", category = catId, isFavourite = false )
         }
         binding?.recipeName?.doOnTextChanged { text, start, before, count ->
             val selectedSpinner = viewModel.selectedSpinner
@@ -198,14 +198,12 @@ class RecipeNewFragment :
 
     }
 
-
     private fun setTitlebarNameOnBack() {
         if (viewModel.isNewRecipe)
             requireActivity().setTitle("NeRecipe")
         else
             requireActivity().setTitle(" Recipe: " + viewModel.getEditedRecipe()?.name)
     }
-
 
     private fun goBackWithDialog() {
         val nameIsSame = viewModel.getEditedRecipe()?.name?.equals(binding?.recipeName?.text.toString()) ?: false

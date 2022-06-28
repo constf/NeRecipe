@@ -83,7 +83,7 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
 
 
     inner class RecipesHelperCallback: ItemTouchHelper.SimpleCallback(
-        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT){
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT){
 
         var dragFrom: Int = -1
         var dragTo: Int = -1

@@ -30,6 +30,23 @@ class RecipeRepositoryImplementation(private val dao: RecipesDao): RecipeReposit
         dao.removeById(id)
     }
 
+    override fun clearAll() {
+        dao.clearAll()
+    }
+
+    override fun getRecipesList(ids: List<Long>): List<Recipe> {
+        return dao.getRecipesList(ids).map { it.toModel() }
+    }
+
+    override fun listAllRecipes(): List<Recipe> {
+        return dao.listAllRecipes().map { it.toModel() }
+    }
+
+
+    override fun listAllSelectedRecipes(): List<Recipe> {
+        return dao.listAllFilteredRecipes().map { it.toModel() }
+    }
+
     override fun setFavourite(id: Long, favourite: Boolean) {
         dao.setFavourite(id, favourite)
     }

@@ -59,9 +59,6 @@ class RecipesFeederFragment : Fragment() {
             viewModel.initCategories()
         }
 
-
-        //showEmptyState()
-
         // Submit the list of recipes for the RW with the account of possible applied filter
         viewModel.recData.observe(viewLifecycleOwner) { recipes ->
 

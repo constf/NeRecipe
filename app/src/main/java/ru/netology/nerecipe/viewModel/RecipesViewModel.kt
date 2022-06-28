@@ -63,6 +63,10 @@ class RecipesViewModel(val inApplication: Application):
     var tempRecipe: Recipe? = null
     fun saveRecipe(recipe: Recipe) = recipesRepo.save(recipe)
     fun deleteRecipe(recipe: Recipe) = recipesRepo.remove(recipe.id)
+    fun clearAllRecipes() = recipesRepo.clearAll()
+    fun getRecipesByIdList(ids: List<Long>) = recipesRepo.getRecipesList(ids)
+    fun listAllRecipes() = recipesRepo.listAllRecipes()
+    fun listAllFilteredRecipes() = recipesRepo.listAllSelectedRecipes()
 
     // Recipe steps data section
     private val recStepsRepo: RecipeStepsRepository =
@@ -72,12 +76,10 @@ class RecipesViewModel(val inApplication: Application):
     private var editStep: RecipeStep? = null
     private var editedStepsCount = 1L
     var stepUri: Uri? = null
-    //var stepIdsList: MutableList<Long> = mutableListOf<Long>()
-
     fun saveStep(step: RecipeStep) = recStepsRepo.save(step)
     fun removeStep(step: RecipeStep) = recStepsRepo.remove(step.id)
-
     fun clearEditedStep() { editStep = null }
+    fun getStepsWithRecId(id: Long) = recStepsRepo.getStepsListWithRecId(id)
 
     fun setEditedStepsPicture(picUri: Uri?) {
         // Basic checks
@@ -303,7 +305,6 @@ class RecipesViewModel(val inApplication: Application):
         isNewStep = true
         val stepId = saveStep(step)
         editStep = step.copy(id = stepId)
-        //stepIdsList.add(stepId)
         navigateToNewStepEdit.call()
     }
 
@@ -313,14 +314,14 @@ class RecipesViewModel(val inApplication: Application):
         deleteEditedStepPicture()
         recStepsRepo.remove(step.id)
 
-        //stepIdsList = stepIdsList.filter { it != step.id }.toMutableList()
-
         editStep = oldvalue
     }
 
     override fun getNumberOfSelectedCategories(): Int {
         return categoriesRepo.getNumberOfSelectedCategories()
     }
+
+    fun deleteAllCategories() = categoriesRepo.deleteAllCategories()
 
     override fun setCetegoryVisible(id: Long) {
         categoriesRepo.setVisible(id)
@@ -329,13 +330,6 @@ class RecipesViewModel(val inApplication: Application):
     override fun setCetegoryInvisible(id: Long) {
         categoriesRepo.setNotVisible(id)
     }
-
-    //    fun deleteUnsavedSteps(){
-//        stepIdsList.forEach { delId ->
-//            recStepsRepo.remove(delId)
-//        }
-//        stepIdsList.clear()
-//    }
 
 
     fun setFavourite(id: Long, favourite: Boolean) {
@@ -364,14 +358,18 @@ class RecipesViewModel(val inApplication: Application):
     }
 
     fun initCategories() {
-        val cats = catData.value
-        val size = cats?.size ?: 0
+
+        val size = getNumberOfSelectedCategories()
+
         if (size > 0) return
 
-        saveCategory(RecCategory(NEW_ITEM_ID, "Please choose the category below:"))
-        saveCategory(RecCategory(NEW_ITEM_ID, "Russian"))
-        saveCategory(RecCategory(NEW_ITEM_ID, "International"))
-        saveCategory(RecCategory(NEW_ITEM_ID, "Turkie"))
+        saveCategory(RecCategory(NEW_ITEM_ID, "Европейская"))
+        saveCategory(RecCategory(NEW_ITEM_ID, "Азиатская"))
+        saveCategory(RecCategory(NEW_ITEM_ID, "Паназиатская"))
+        saveCategory(RecCategory(NEW_ITEM_ID, "Восточная"))
+        saveCategory(RecCategory(NEW_ITEM_ID, "Американская"))
+        saveCategory(RecCategory(NEW_ITEM_ID, "Русская"))
+        saveCategory(RecCategory(NEW_ITEM_ID, "Средиземноморская"))
     }
 
     fun getEditedStep(): RecipeStep? {

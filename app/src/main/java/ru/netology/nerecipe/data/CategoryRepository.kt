@@ -16,4 +16,6 @@ interface CategoryRepository {
     fun getIdByName(category: String?): Long?
 
     fun getNumberOfSelectedCategories(): Int
+
+    fun deleteAllCategories()
 }

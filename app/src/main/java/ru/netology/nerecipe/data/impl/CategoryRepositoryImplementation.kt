@@ -25,6 +25,10 @@ class CategoryRepositoryImplementation(private val dao: CategoryDao): CategoryRe
         return dao.getNumberOfSelectedCategories()
     }
 
+    override fun deleteAllCategories() {
+        dao.deleteAllCategories()
+    }
+
     override fun getIdByName(category: String?): Long? {
         return dao.getIdByName(category)
     }
