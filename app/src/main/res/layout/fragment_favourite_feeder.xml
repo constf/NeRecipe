@@ -19,7 +19,35 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/recipes_details"
+        android:visibility="visible"
         />
+
+    <ImageView
+        android:id="@+id/empty_state_picture_favourites"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/no_favourites_hearts"
+        android:scaleType="fitStart"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/empty_state_text_favourites"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/empty_state_picture_favourites"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="18dp"
+        android:gravity="center"
+        android:text="Now the list of Favourite Recipes is EMPTY!\nPlease add a recipe to this list with favourite symbol."
+        android:visibility="gone"
+        />
+
 
 
 

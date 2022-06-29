@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.CategoryDetailCheckboxBinding
 import ru.netology.nerecipe.dto.RecCategory
 import ru.netology.nerecipe.viewModel.CategoriesHelper
@@ -62,7 +63,7 @@ class CategoriesAdapter(private val helper: CategoriesHelper): ListAdapter<RecCa
                     // it doesn't trigger the CheckChanged listener... looks like
                     checkboxCategory.tag = TAG_SKIP
                     buttonView.isChecked = true
-                    Toast.makeText(binding.root.context, "There must be at least ONE category selected!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(binding.root.context, binding.root.context.getString(R.string.cat_adapter_string01), Toast.LENGTH_LONG).show()
                 }
             }
         }

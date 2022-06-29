@@ -103,9 +103,9 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
                             when(item.itemId) {
                                 R.id.step_remove -> {
                                     MaterialAlertDialogBuilder(it.context)
-                                        .setMessage("Are you sure to delete this step description?")
-                                        .setNegativeButton("No, let it stay"){ dialog, which -> }
-                                        .setPositiveButton("Yes, delete!"){ dialog, which ->
+                                        .setMessage(it.context.getString(R.string.steps_adapter_string01))
+                                        .setNegativeButton(it.context.getString(R.string.steps_adapter_string02)){ dialog, which -> }
+                                        .setPositiveButton(it.context.getString(R.string.steps_adapter_string03)){ dialog, which ->
                                             helper.deleteEditedStep(step)
                                         }.show()
                                     true

@@ -27,7 +27,7 @@ class RecipesFeederFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            Toast.makeText(context, "Press BACK once more to exit the App!", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, getString(R.string.rec_feeder_string01), Toast.LENGTH_LONG).show()
             val exit = requireActivity().onBackPressedDispatcher.addCallback(){
                 requireActivity().finish()
             }
@@ -45,10 +45,9 @@ class RecipesFeederFragment : Fragment() {
         val rw = binding?.recipesList ?: return binding?.root
         adapter.attachRecyclerView(rw)
 
-
-
-
         viewModel.isFavouriteShow = false
+
+        requireActivity().setTitle("NeRecipe")
 
         // set the filter string
         val filter = if (viewModel.recipeNamesFilter.value.isNullOrEmpty()) ""

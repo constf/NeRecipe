@@ -92,7 +92,7 @@ class StepNewFragment: Fragment() {
             R.id.recipe_new_options_save -> {
                 with(binding){
                     if (stepContent.text.toString().isNullOrBlank()){
-                        Toast.makeText(context, "Recipe step description can not be empty!", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, getString(R.string.step_new_string01), Toast.LENGTH_SHORT)
                             .also { it.setGravity(Gravity.CENTER_VERTICAL, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT) }
                             .show()
                         return true
@@ -146,10 +146,10 @@ class StepNewFragment: Fragment() {
 
         if (!textSame || pictureAdded) {
             MaterialAlertDialogBuilder(requireContext())
-                .setMessage("Are you sure to discard the changes? This action can NOT be restored!")
-                .setNegativeButton("No, stay here"){ dialog, which ->
+                .setMessage(getString(R.string.step_new_string02))
+                .setNegativeButton(getString(R.string.step_new_string03)){ dialog, which ->
 
-                }.setPositiveButton("Yes, discard."){ dialog, which ->
+                }.setPositiveButton(getString(R.string.step_new_string04)){ dialog, which ->
                     if ( pictureAdded ) viewModel.deleteEditedStepPicture()
                     if (viewModel.tempBitMap != null) viewModel.saveTempBitmapToFile()
                     if ( viewModel.isNewStep && stepDiscard != null){

@@ -59,7 +59,7 @@ class RecipeNewFragment :
                     val stepsList = viewModel.stepsFilteredData.value?.filter { it.recipeId == curEditRecipe.id }
 
                     if (recipeName.text.toString().isNullOrBlank() || authorName.text.toString().isNullOrBlank() || stepsList?.size == 0){
-                        Toast.makeText(context, "Recipe name and Author name, or Steps list can not be empty!", Toast.LENGTH_SHORT)
+                        Toast.makeText(context, getString(R.string.recipe_new_string01), Toast.LENGTH_SHORT)
                             .also { it.setGravity(Gravity.CENTER_VERTICAL, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT) }
                             .show()
                         return true
@@ -78,7 +78,7 @@ class RecipeNewFragment :
                 if (viewModel.isNewRecipe)
                     requireActivity().setTitle("NeRecipe")
                 else
-                    requireActivity().setTitle(" Recipe: " + viewModel.getEditedRecipe()?.name)
+                    requireActivity().setTitle(getString(R.string.recipe_new_string02) + viewModel.getEditedRecipe()?.name)
 
                 val resultBundle = Bundle(1)
                 val content = RESULT_VALUE
@@ -111,7 +111,7 @@ class RecipeNewFragment :
 
         // Initializing the View fileds
         val recipe = viewModel.getEditedRecipe() ?: return binding?.root
-        var selectedSpinner = viewModel.getCategoryName(recipe.category) ?: "No category set"
+        var selectedSpinner = viewModel.getCategoryName(recipe.category) ?: getString(R.string.recipe_new_string03)
 
         if (viewModel.tempRecipe == null) {
             binding?.recipeName?.setText(recipe.name)
@@ -123,14 +123,14 @@ class RecipeNewFragment :
             binding?.recipeName?.setText(tr?.name)
             binding?.authorName?.setText(tr?.author)
             binding?.imageFavourite?.isChecked = tr!!.isFavourite
-            selectedSpinner = viewModel.getCategoryName(tr.category) ?: "No category set"
+            selectedSpinner = viewModel.getCategoryName(tr.category) ?: getString(R.string.recipe_new_string03)
         }
 
         requireActivity().setTitle(
             if ( recipe.name.isBlank() || recipe.name.isEmpty() )
-                " Creating new recipe"
+                getString(R.string.recipe_new_string04)
             else
-                " Editing: " + recipe.name
+                getString(R.string.recipe_new_string05) + recipe.name
         )
 
         // Creating a drop down list for categories
@@ -202,7 +202,7 @@ class RecipeNewFragment :
         if (viewModel.isNewRecipe)
             requireActivity().setTitle("NeRecipe")
         else
-            requireActivity().setTitle(" Recipe: " + viewModel.getEditedRecipe()?.name)
+            requireActivity().setTitle(getString(R.string.recipe_new_string02) + viewModel.getEditedRecipe()?.name)
     }
 
     private fun goBackWithDialog() {
@@ -216,10 +216,10 @@ class RecipeNewFragment :
 
         if (!nameIsSame || !authorIsSame || catChanged ) {
             MaterialAlertDialogBuilder(requireContext())
-                .setMessage("Are you sure to discard the changes?")
-                .setNegativeButton("No, stay here"){ dialog, which ->
+                .setMessage(getString(R.string.recipe_new_string06))
+                .setNegativeButton(getString(R.string.recipe_new_string07)){ dialog, which ->
 
-                }.setPositiveButton("Yes, discard."){ dialog, which ->
+                }.setPositiveButton(getString(R.string.recipe_new_string08)){ dialog, which ->
                     //viewModel.deleteUnsavedSteps()
                     if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
                     setTitlebarNameOnBack()

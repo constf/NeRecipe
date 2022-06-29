@@ -19,12 +19,13 @@ class FavouriteFeederFragment : Fragment() {
     private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
     private var _binding: FragmentFavouriteFeederBinding? = null
     private val binding get() = _binding
+    private var isEmptyState: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            Toast.makeText(context, "Please use bottom menu to switch between screens!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context?.getString(R.string.fav_feeder_string01), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -40,7 +41,13 @@ class FavouriteFeederFragment : Fragment() {
 
         viewModel.isFavouriteShow = true
 
+        requireActivity().setTitle(getString(R.string.fav_feeder_string02))
+
         viewModel.allRecipesData.observe(viewLifecycleOwner) { recipes ->
+            if(recipes.filter { it.isFavourite }.size == 0)
+                showEmptyStateFavourites()
+            else if (isEmptyState) hideEmptyStateFavourites()
+
             adapter.submitList(recipes.filter{ it.isFavourite })
         }
 
@@ -54,6 +61,33 @@ class FavouriteFeederFragment : Fragment() {
 
         return binding?.root
     }
+
+    private fun showEmptyStateFavourites() {
+        if (binding == null) return
+        with(binding!!) {
+            // Hide RW and filter edit field
+            recipesList.visibility = View.GONE
+
+            // SHow Empty State pic and text
+            emptyStatePictureFavourites.visibility = View.VISIBLE
+            emptyStateTextFavourites.visibility = View.VISIBLE
+        }
+        isEmptyState = true
+    }
+
+    private fun hideEmptyStateFavourites() {
+        if (binding == null) return
+        with(binding!!) {
+            // Show RW and filter edit field
+            recipesList.visibility = View.VISIBLE
+
+            // Hide Empty State pic and text
+            emptyStatePictureFavourites.visibility = View.GONE
+            emptyStateTextFavourites.visibility = View.GONE
+        }
+        isEmptyState = false
+    }
+
 
     companion object {
         const val TAG = "FavouriteFeederFragment"

@@ -71,9 +71,9 @@ class RecipesCardFragment : Fragment() {
                             }
                             R.id.recipe_remove -> {
                                 MaterialAlertDialogBuilder(it.context)
-                                    .setMessage("Are you sure to delete this Recipe with descriptions?")
-                                    .setNegativeButton("No, let it stay") { dialog, which -> }
-                                    .setPositiveButton("Yes, delete!") { dialog, which ->
+                                    .setMessage(getString(R.string.recipe_card_string01))
+                                    .setNegativeButton(getString(R.string.recipe_card_string02)) { dialog, which -> }
+                                    .setPositiveButton(getString(R.string.recipe_card_string03)) { dialog, which ->
                                         viewModel.deleteRecipe(recipe)
                                         parentFragmentManager.popBackStack()
                                     }.show()
