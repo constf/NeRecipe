@@ -22,7 +22,7 @@
     <string name="cat_ffeeder_string02">NeRecipe, категории</string>
     <string name="cat_feeder_string01">Для переключения между экранами, используйте нижнее меню!</string>
     <string name="steps_adapter_string01">Вы хотите удалить это описание для рецепта?</string>
-    <string name="steps_adapter_string02">Нет, пусть остаётс!</string>
+    <string name="steps_adapter_string02">Нет, пусть остаётся!</string>
     <string name="steps_adapter_string03">Да, удалить!</string>
     <string name="cat_adapter_string01">Должна быть выбрана хотя-бы ОДНА категория!</string>
     <string name="save_string">Сохранить</string>
