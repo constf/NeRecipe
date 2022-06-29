@@ -22,10 +22,10 @@
     <string name="fav_feeder_string01">Please use bottom menu to switch between screens!</string>
     <string name="fav_feeder_string02">NeRecipe, Favourites list</string>
     <string name="recipe_new_string01">Recipe name and Author name, or Steps list can not be empty!</string>
-    <string name="recipe_new_string02">\" Recipe: \"</string>
+    <string name="recipe_new_string02">" Recipe: "</string>
     <string name="recipe_new_string03">No category set</string>
     <string name="recipe_new_string04"> Creating new recipe</string>
-    <string name="recipe_new_string05">\" Editing: \"</string>
+    <string name="recipe_new_string05">" Editing: "</string>
     <string name="recipe_new_string06">Are you sure to discard the changes?</string>
     <string name="recipe_new_string07">No, stay here</string>
     <string name="recipe_new_string08">Yes, discard.</string>
@@ -37,4 +37,6 @@
     <string name="step_new_string02">Are you sure to discard the changes? This action can NOT be restored!</string>
     <string name="step_new_string03">No, stay here</string>
     <string name="step_new_string04">Yes, discard.</string>
+    <string name="rec_feeder_layout_string01">\n\n\n\n\n\n\nNow the list of Recipes is Empty! Please press the + button to add a Recipe and fill it with data.</string>
+    <string name="fav_feeder_layout_string01">Now the list of Favourite Recipes is EMPTY!\nPlease add a recipe to this list with favourite symbol.</string>
 </resources>

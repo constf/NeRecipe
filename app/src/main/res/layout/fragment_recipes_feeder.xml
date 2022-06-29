@@ -36,7 +36,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="\n\n\n\n\n\n\nNow the list of Recipes is Empty! Please press the + button to add a Recipe and fill it with data."
+        android:text="@string/rec_feeder_layout_string01"
         android:textColor="@color/white"
         android:textSize="18dp"
         android:visibility="invisible"

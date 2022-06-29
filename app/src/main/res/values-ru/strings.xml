@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NeRecipe</string>
+    <string name="recipe_card_string01">Вы хотите удалить Рецепт и его описание?</string>
+    <string name="recipe_card_string02">Нет, оставим.</string>
+    <string name="recipe_card_string03">Да, удаляем.</string>
+    <string name="rec_feeder_string01">Нажмите [BACK] ещё раз для выхода из приложения!</string>
+    <string name="step_new_string01">Описание рецепта не может быть пустым!</string>
+    <string name="step_new_string02">Вы хотите отменить изменения? Данное действие не может быть отменено!</string>
+    <string name="step_new_string03">Нет, останусь здесь!</string>
+    <string name="step_new_string04">Да, отменить!</string>
+    <string name="recipe_new_string06">Вы хотите отменить изменения?</string>
+    <string name="recipe_new_string07">Нет, останусь здесь!</string>
+    <string name="recipe_new_string08">Да, отменить!</string>
+    <string name="recipe_new_string05">"Редактирование: "</string>
+    <string name="recipe_new_string04">Создание нового рецепта</string>
+    <string name="recipe_new_string03">Категория не установлена</string>
+    <string name="recipe_new_string02">"Рецепт: "</string>
+    <string name="recipe_new_string01">Название, автор или описание Рецепта не могут быть пустыми!</string>
+    <string name="fav_feeder_string02">NeRecipe, избранные рецепты</string>
+    <string name="fav_feeder_string01">Для переключения между экранами, используйте нижнее меню!</string>
+    <string name="cat_ffeeder_string02">NeRecipe, категории</string>
+    <string name="cat_feeder_string01">Для переключения между экранами, используйте нижнее меню!</string>
+    <string name="steps_adapter_string01">Вы хотите удалить это описание для рецепта?</string>
+    <string name="steps_adapter_string02">Нет, пусть остаётс!</string>
+    <string name="steps_adapter_string03">Да, удалить!</string>
+    <string name="cat_adapter_string01">Должна быть выбрана хотя-бы ОДНА категория!</string>
+    <string name="save_string">Сохранить</string>
+    <string name="author_name_hint_string">Имя автора</string>
+    <string name="recipe_name_hint_string">Название рецепта</string>
+    <string name="item_remove_more">Удалить</string>
+    <string name="item_edit_more">Редактировать</string>
+    <string name="text_category">Название кухни / категории</string>
+    <string name="text_kitchen_label">"Кухня: "</string>
+    <string name="text_author_name">Имя автора</string>
+    <string name="text_recipe_name">Название рецепта</string>
+    <string name="recipes_filter_edit_hint_string">Введите название рецепта для поиска</string>
+    <string name="item_filter_string">Фильтр</string>
+    <string name="item_favourites_list_string">Избранные</string>
+    <string name="item_recipes_list_string">Рецепты</string>
+    <string name="rec_feeder_layout_string01">\n\n\n\n\n\n\nСейчас спиок рецептов ПУСТ! Пожалуйста, нажмите на кнопку (+) для создания и добавления репепта.</string>
+    <string name="fav_feeder_layout_string01">Сейчас список избранных рецептов ПУСТ! Для добавления рецепта сюда, нажмите на (избранное) при просмотре рецепта.</string>
+</resources>

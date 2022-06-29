@@ -44,7 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:textSize="18dp"
         android:gravity="center"
-        android:text="Now the list of Favourite Recipes is EMPTY!\nPlease add a recipe to this list with favourite symbol."
+        android:text="@string/fav_feeder_layout_string01"
         android:visibility="gone"
         />
 
