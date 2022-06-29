@@ -10,6 +10,7 @@ import androidx.fragment.app.commit
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.ActivityMainBinding
 
+
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
