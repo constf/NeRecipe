@@ -36,8 +36,6 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
 
     fun attachRecyclerView(rw: RecyclerView){
         mTouchHelper.attachToRecyclerView(rw)
-        val en = helperCallback.isLongPressDragEnabled
-        val ch = en
     }
 
     inner class RecipeViewHolder(val binding: RecipesDetailsBinding): RecyclerView.ViewHolder(binding.root) {
@@ -49,7 +47,11 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
                 authorName.text = item.author
                 categoryText.text =
                     helper.getCategoryName(item.category) ?: "Error fetching the Category!"
-                if (item.isFavourite) imageLikeShow.isVisible = true
+
+                if (item.isFavourite)
+                    imageLikeShow.isVisible = true
+                else
+                    imageLikeShow.isVisible = false
 
                 if (bindType == RECIPES_ADAPTER) { // if we show recipes scree
                     recipeCardContainer.setOnClickListener {

@@ -109,6 +109,7 @@ class RecipesFeederFragment : Fragment() {
         }
 
         // Show Recipe New Fragment
+        binding?.addRecipeButton?.alpha = 0.90f
         binding?.addRecipeButton?.setOnClickListener {
             viewModel.addNewRecipe()
 
