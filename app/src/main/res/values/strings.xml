@@ -39,4 +39,5 @@
     <string name="step_new_string04">Yes, discard.</string>
     <string name="rec_feeder_layout_string01">\n\n\n\n\n\n\nNow the list of Recipes is Empty! Please press the + button to add a Recipe and fill it with data.</string>
     <string name="fav_feeder_layout_string01">Now the list of Favourite Recipes is EMPTY!\nPlease add a recipe to this list with favourite symbol.</string>
+    <string name="new_step_layout_string01">New Step</string>
 </resources>

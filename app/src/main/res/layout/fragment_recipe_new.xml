@@ -92,7 +92,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/author_name"
         app:layout_constraintBottom_toBottomOf="@id/author_name"
-        android:text="New Step"
+        android:text="@string/new_step_layout_string01"
         />
 
     <androidx.recyclerview.widget.RecyclerView
