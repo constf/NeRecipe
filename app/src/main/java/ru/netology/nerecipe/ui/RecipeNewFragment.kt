@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.commit
 import androidx.fragment.app.setFragmentResult
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.adapter.StepsAdapter
@@ -56,7 +57,7 @@ class RecipeNewFragment :
             R.id.recipe_new_options_save -> {
                 with(binding!!){
                     val curEditRecipe = viewModel.getEditedRecipe() ?: return false
-                    val stepsList = viewModel.stepsFilteredData.value?.filter { it.recipeId == curEditRecipe.id }
+                    val stepsList = viewModel.stepsAllData.value?.filter { it.recipeId == curEditRecipe.id }
 
                     if (recipeName.text.toString().isNullOrBlank() || authorName.text.toString().isNullOrBlank() || stepsList?.size == 0){
                         Toast.makeText(context, getString(R.string.recipe_new_string01), Toast.LENGTH_SHORT)
@@ -156,7 +157,7 @@ class RecipeNewFragment :
         val rw = binding?.stepsListNew ?: return binding?.root
         adapter.attachRecyclerView(rw)
 
-        viewModel.stepsFilteredData.observe(viewLifecycleOwner) { steps ->
+        viewModel.stepsAllData.observe(viewLifecycleOwner) { steps ->
             adapter.submitList(steps.filter { it.recipeId == recipe.id })
         }
 
@@ -182,6 +183,12 @@ class RecipeNewFragment :
             val selectedSpinner = viewModel.selectedSpinner
             val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
             viewModel.tempRecipe = viewModel.tempRecipe?.copy(name = text.toString(), category = catId) ?: Recipe(NEW_ITEM_ID, name = text.toString(), author = "", category = catId, isFavourite = false )
+        }
+        binding?.imageFavourite?.setOnClickListener {
+            val selectedSpinner = viewModel.selectedSpinner
+            val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
+            val button = it as MaterialButton
+            viewModel.tempRecipe = viewModel.tempRecipe?.copy(isFavourite = button.isChecked, category = catId) ?: Recipe(NEW_ITEM_ID, name = "", author = "", category = catId, isFavourite = button.isChecked )
         }
 
         return binding?.root

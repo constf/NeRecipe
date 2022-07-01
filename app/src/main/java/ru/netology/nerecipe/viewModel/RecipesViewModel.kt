@@ -72,6 +72,7 @@ class RecipesViewModel(val inApplication: Application):
     private val recStepsRepo: RecipeStepsRepository =
         RecipeStepsRepositoryImplementation(AppDb.getInstance(inApplication).recStepsDao)
     val stepsFilteredData by recStepsRepo::dataFiltered
+    val stepsAllData by recStepsRepo::dataAll
     val editedStepsList: MutableList<RecipeStep> = mutableListOf()
     private var editStep: RecipeStep? = null
     private var editedStepsCount = 1L
@@ -339,7 +340,7 @@ class RecipesViewModel(val inApplication: Application):
     fun onSaveEditedRecipe(recipe: Recipe) {
         val recId = saveRecipe(recipe)
 
-        val stepsList = stepsFilteredData.value?.filter { it.recipeId == recId }
+        val stepsList = stepsAllData.value?.filter { it.recipeId == recId }
 
         stepsList?.forEach{ step ->
             updateStep(step)
