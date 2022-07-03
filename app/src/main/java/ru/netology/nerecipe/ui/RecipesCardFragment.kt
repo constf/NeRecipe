@@ -9,8 +9,8 @@ import androidx.activity.addCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
 import androidx.fragment.app.setFragmentResultListener
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nerecipe.R
@@ -19,7 +19,7 @@ import ru.netology.nerecipe.databinding.FragmentRecipeCardBinding
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 class RecipesCardFragment : Fragment() {
-    private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
+    private val viewModel: RecipesViewModel by activityViewModels()
     private var _binding: FragmentRecipeCardBinding? = null
     private val binding get() = _binding
 
@@ -28,8 +28,7 @@ class RecipesCardFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
-            requireActivity().setTitle("NeRecipe")
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
     }
 
@@ -44,14 +43,12 @@ class RecipesCardFragment : Fragment() {
 
         _binding = FragmentRecipeCardBinding.inflate(inflater, container, false)
 
-        val adapter: StepsAdapter = StepsAdapter(viewModel, StepsAdapter.SHOW_ADAPTER)
+        val adapter = StepsAdapter(viewModel, StepsAdapter.SHOW_ADAPTER)
 
-        requireActivity().setTitle(" Recipe: " + recipe?.name)
-
-        binding?.recipeName?.text = recipe?.name
-        binding?.authorName?.text = recipe?.author
-        binding?.categoryText?.text = viewModel.getCatNameId(recipe!!.category)
-        binding?.imageFavourite?.isChecked = recipe!!.isFavourite
+        binding?.recipeName?.text = recipe.name
+        binding?.authorName?.text = recipe.author
+        binding?.categoryText?.text = viewModel.getCatNameId(recipe.category)
+        binding?.imageFavourite?.isChecked = recipe.isFavourite
 
         binding?.stepsList?.adapter = adapter
 
@@ -75,7 +72,7 @@ class RecipesCardFragment : Fragment() {
                                     .setNegativeButton(getString(R.string.recipe_card_string02)) { dialog, which -> }
                                     .setPositiveButton(getString(R.string.recipe_card_string03)) { dialog, which ->
                                         viewModel.deleteRecipe(recipe)
-                                        parentFragmentManager.popBackStack()
+                                        findNavController().popBackStack()
                                     }.show()
                                 true
                             }
@@ -90,10 +87,7 @@ class RecipesCardFragment : Fragment() {
 
         viewModel.editRecipe.observe(viewLifecycleOwner) { recipe ->
             if (recipe == null) return@observe
-            parentFragmentManager.commit {
-                addToBackStack(null)
-                replace(R.id.app_fragment_container, RecipeNewFragment())
-            }
+            findNavController().navigate(R.id.action_recipesCardFragment_to_recipeNewFragment)
         }
 
 //        viewModel.navigateToRecipeEditScreen.observe(viewLifecycleOwner) {
@@ -114,10 +108,10 @@ class RecipesCardFragment : Fragment() {
             if (result != RecipeNewFragment.RESULT_VALUE) return@setFragmentResultListener
 
             val updateRecipe = viewModel.getRecipeById(getRecipe.id)
-            binding?.recipeName?.text = updateRecipe?.name
-            binding?.authorName?.text = updateRecipe?.author
-            binding?.categoryText?.text = viewModel.getCatNameId(updateRecipe!!.category)
-            binding?.imageFavourite?.isChecked = updateRecipe!!.isFavourite
+            binding?.recipeName?.text = updateRecipe.name
+            binding?.authorName?.text = updateRecipe.author
+            binding?.categoryText?.text = viewModel.getCatNameId(updateRecipe.category)
+            binding?.imageFavourite?.isChecked = updateRecipe.isFavourite
         }
 
 

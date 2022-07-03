@@ -1,7 +1,6 @@
 package ru.netology.nerecipe.data
 
 import androidx.lifecycle.LiveData
-import ru.netology.nerecipe.dao.RecStepEntity
 import ru.netology.nerecipe.dto.RecipeStep
 
 interface RecipeStepsRepository {

@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RecipesFeederFragment"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="16dp"
+    tools:context=".ui.FavouriteFeederFragment"
     >
 
     <androidx.recyclerview.widget.RecyclerView

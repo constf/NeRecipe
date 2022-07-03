@@ -3,26 +3,21 @@ package ru.netology.nerecipe.ui
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.AdapterView
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nerecipe.R
-import ru.netology.nerecipe.databinding.FragmentRecipeNewBinding
 import ru.netology.nerecipe.databinding.StepDetailsEditBinding
-import ru.netology.nerecipe.dto.RecipeStep
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 class StepNewFragment: Fragment() {
 
-    private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
+    private val viewModel: RecipesViewModel by activityViewModels()
     private var _binding: StepDetailsEditBinding? = null
     private val binding get() = _binding!!
 
@@ -39,7 +34,7 @@ class StepNewFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = StepDetailsEditBinding.inflate(inflater, container, false)
         activity?.actionBar?.title = "New Step"
 
@@ -80,7 +75,7 @@ class StepNewFragment: Fragment() {
             menuMore.isVisible = false
         }
 
-        return binding?.root
+        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -91,7 +86,7 @@ class StepNewFragment: Fragment() {
         return when (item.itemId) {
             R.id.recipe_new_options_save -> {
                 with(binding){
-                    if (stepContent.text.toString().isNullOrBlank()){
+                    if (stepContent.text.toString().isBlank()){
                         Toast.makeText(context, getString(R.string.step_new_string01), Toast.LENGTH_SHORT)
                             .also { it.setGravity(Gravity.CENTER_VERTICAL, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT) }
                             .show()
@@ -103,7 +98,7 @@ class StepNewFragment: Fragment() {
                     viewModel.onSaveEditedStep(newStep)
                     viewModel.tempBitMap = null
                 }
-                parentFragmentManager.popBackStack()
+                findNavController().popBackStack()
                 true
             }
 
@@ -158,7 +153,7 @@ class StepNewFragment: Fragment() {
                     }
 
                     viewModel.clearEditedStep()
-                    parentFragmentManager.popBackStack()
+                    findNavController().popBackStack()
                 }.show()
         } else {
              if ( pictureAdded ) viewModel.deleteEditedStepPicture()
@@ -168,7 +163,7 @@ class StepNewFragment: Fragment() {
                 //viewModel.stepIdsList = viewModel.stepIdsList.filter { it != stepDiscard.id }.toMutableList()
             }
             viewModel.clearEditedStep()
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
     }
 

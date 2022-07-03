@@ -8,15 +8,14 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
+import androidx.navigation.fragment.findNavController
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.adapter.RecipesAdapter
 import ru.netology.nerecipe.databinding.FragmentFavouriteFeederBinding
-import ru.netology.nerecipe.databinding.FragmentRecipesFeederBinding
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 class FavouriteFeederFragment : Fragment() {
-    private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
+    private val viewModel: RecipesViewModel by activityViewModels()
     private var _binding: FragmentFavouriteFeederBinding? = null
     private val binding get() = _binding
     private var isEmptyState: Boolean = false
@@ -41,8 +40,6 @@ class FavouriteFeederFragment : Fragment() {
 
         viewModel.isFavouriteShow = true
 
-        requireActivity().setTitle(getString(R.string.fav_feeder_string02))
-
         viewModel.allRecipesData.observe(viewLifecycleOwner) { recipes ->
             if(recipes.filter { it.isFavourite }.size == 0)
                 showEmptyStateFavourites()
@@ -53,10 +50,7 @@ class FavouriteFeederFragment : Fragment() {
 
         viewModel.showRecipe.observe(viewLifecycleOwner) { recipe ->
             if (recipe == null) return@observe
-            parentFragmentManager.commit {
-                addToBackStack(null)
-                replace(R.id.app_fragment_container, RecipesCardFragment())
-            }
+            findNavController().navigate(R.id.action_favouriteFeederFragment_to_recipesCardFragment)
         }
 
         return binding?.root
@@ -88,8 +82,4 @@ class FavouriteFeederFragment : Fragment() {
         isEmptyState = false
     }
 
-
-    companion object {
-        const val TAG = "FavouriteFeederFragment"
-    }
 }

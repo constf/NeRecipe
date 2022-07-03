@@ -1,23 +1,16 @@
 package ru.netology.nerecipe.adapter
 
-import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.view.doOnDetach
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
 import ru.netology.nerecipe.R
-import ru.netology.nerecipe.databinding.RecipesDetailsBinding
 import ru.netology.nerecipe.databinding.StepDetailsShowBinding
 import ru.netology.nerecipe.dto.RecipeStep
 import ru.netology.nerecipe.viewModel.StepsDetailsHelper
@@ -138,8 +131,8 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
     inner class StepsHelperCallback: ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT){
 
-        var dragFrom: Int = -1
-        var dragTo: Int = -1
+        private var dragFrom: Int = -1
+        private var dragTo: Int = -1
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
             val fromPosition = viewHolder.bindingAdapterPosition
@@ -166,7 +159,8 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
 
             helper.updateStepsRepoWithListFromTo(list, dragFrom, dragTo)
 
-            dragFrom = -1; dragTo = -1;
+            dragFrom = -1
+            dragTo = -1
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

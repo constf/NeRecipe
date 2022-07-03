@@ -14,7 +14,7 @@ import ru.netology.nerecipe.databinding.FragmentCategoriesFeederBinding
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 class CategoriesFeederFragment: Fragment() {
-    private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
+    private val viewModel: RecipesViewModel by activityViewModels()
     private var _binding: FragmentCategoriesFeederBinding? = null
     private val binding get() = _binding
 
@@ -36,8 +36,6 @@ class CategoriesFeederFragment: Fragment() {
         val adapter = CategoriesAdapter(viewModel)
         binding?.categoriesList?.adapter = adapter
 
-        requireActivity().setTitle(getString(R.string.cat_ffeeder_string02))
-
         viewModel.catData.observe(viewLifecycleOwner){ categories ->
             adapter.submitList(categories)
         }
@@ -46,7 +44,4 @@ class CategoriesFeederFragment: Fragment() {
         return binding?.root
     }
 
-    companion object {
-        const val TAG = "CategoriesFeederFragment"
-    }
 }

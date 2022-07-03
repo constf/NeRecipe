@@ -3,14 +3,12 @@ package ru.netology.nerecipe.ui
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
-import com.google.android.material.snackbar.Snackbar
+import androidx.navigation.fragment.findNavController
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.adapter.RecipesAdapter
 import ru.netology.nerecipe.databinding.FragmentRecipesFeederBinding
@@ -18,7 +16,7 @@ import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 class RecipesFeederFragment : Fragment() {
 
-    private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
+    private val viewModel: RecipesViewModel by activityViewModels()
     private var _binding: FragmentRecipesFeederBinding? = null
     private val binding get() = _binding
     private var isEmptyState: Boolean = false
@@ -28,7 +26,7 @@ class RecipesFeederFragment : Fragment() {
         super.onCreate(savedInstanceState)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
             Toast.makeText(context, getString(R.string.rec_feeder_string01), Toast.LENGTH_LONG).show()
-            val exit = requireActivity().onBackPressedDispatcher.addCallback(){
+            val exit = requireActivity().onBackPressedDispatcher.addCallback {
                 requireActivity().finish()
             }
         }
@@ -46,8 +44,6 @@ class RecipesFeederFragment : Fragment() {
         adapter.attachRecyclerView(rw)
 
         viewModel.isFavouriteShow = false
-
-        requireActivity().setTitle("NeRecipe")
 
         // set the filter string
         val filter = if (viewModel.recipeNamesFilter.value.isNullOrEmpty()) ""
@@ -88,8 +84,6 @@ class RecipesFeederFragment : Fragment() {
             }
         }
 
-        // viewModel.createInitialDataSet() initial creation of recipes))) now we have enough in our db!
-
 
         // Callback to monitor the filter text input by user
         binding?.recipeNameFilterEdit?.doOnTextChanged { text, start, before, count ->
@@ -102,10 +96,7 @@ class RecipesFeederFragment : Fragment() {
         // Show recipe card fragment
         viewModel.showRecipe.observe(viewLifecycleOwner) { recipe ->
             if (recipe == null) return@observe
-            parentFragmentManager.commit {
-                addToBackStack(null)
-                replace(R.id.app_fragment_container, RecipesCardFragment())
-            }
+            findNavController().navigate(R.id.action_recipesFeederFragment_to_recipesCardFragment)
         }
 
         // Show Recipe New Fragment
@@ -116,17 +107,11 @@ class RecipesFeederFragment : Fragment() {
         }
         viewModel.editRecipe.observe(viewLifecycleOwner) { recipe ->
             if (recipe == null) return@observe
-            parentFragmentManager.commit {
-                addToBackStack("RecipesFeeder")
-                replace(R.id.app_fragment_container, RecipeNewFragment())
-            }
+            findNavController().navigate(R.id.action_recipesFeederFragment_to_recipeNewFragment)
         }
 
         if (viewModel.tempRecipe != null && viewModel.editRecipe.value != null){
-            parentFragmentManager.commit {
-                addToBackStack("RecipesFeeder")
-                replace(R.id.app_fragment_container, RecipeNewFragment())
-            }
+            findNavController().navigate(R.id.action_recipesFeederFragment_to_recipeNewFragment)
         }
 
         return binding?.root
@@ -160,9 +145,5 @@ class RecipesFeederFragment : Fragment() {
         isEmptyState = false
     }
 
-
-    companion object {
-        const val TAG = "RecipesFeederFragment"
-    }
 }
 

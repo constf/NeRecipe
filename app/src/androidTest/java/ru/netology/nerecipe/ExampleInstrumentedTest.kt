@@ -10,7 +10,6 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 import ru.netology.nerecipe.dto.Recipe
 import ru.netology.nerecipe.dto.RecipeStep
-import ru.netology.nerecipe.ui.RecipesFeederFragment
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 /**
@@ -177,20 +176,20 @@ class ExampleInstrumentedTest {
         val id2 = viewModel.saveRecipe(recipe2)
         val id3 = viewModel.saveRecipe(recipe3)
         val id4 = viewModel.saveRecipe(recipe4)
-        viewModel.setCetegoryVisible(1L)
-        viewModel.setCetegoryVisible(2L)
-        viewModel.setCetegoryVisible(3L)
+        viewModel.setCategoryVisible(1L)
+        viewModel.setCategoryVisible(2L)
+        viewModel.setCategoryVisible(3L)
 
         val listOfIds = listOf(id1, id2, id3, id4)
         val listRecipes1 = viewModel.listAllFilteredRecipes()
 
-        viewModel.setCetegoryInvisible(1L)
+        viewModel.setCategoryInvisible(1L)
         val listRecipes2 = viewModel.listAllFilteredRecipes()
 
-        viewModel.setCetegoryInvisible(3L)
+        viewModel.setCategoryInvisible(3L)
         val listRecipes3 = viewModel.listAllFilteredRecipes()
 
-        viewModel.setCetegoryVisible(1L)
+        viewModel.setCategoryVisible(1L)
         val listRecipes4 = viewModel.listAllFilteredRecipes()
 
 

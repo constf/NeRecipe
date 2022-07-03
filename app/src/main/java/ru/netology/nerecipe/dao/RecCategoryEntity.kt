@@ -3,7 +3,6 @@ package ru.netology.nerecipe.dao
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import org.jetbrains.annotations.PropertyKey
 import ru.netology.nerecipe.dto.RecCategory
 
 @Entity(tableName = "categories")

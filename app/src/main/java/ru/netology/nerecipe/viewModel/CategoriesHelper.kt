@@ -2,6 +2,6 @@ package ru.netology.nerecipe.viewModel
 
 interface CategoriesHelper {
     fun getNumberOfSelectedCategories(): Int
-    fun setCetegoryVisible(id: Long)
-    fun setCetegoryInvisible(id: Long)
+    fun setCategoryVisible(id: Long)
+    fun setCategoryInvisible(id: Long)
 }

@@ -1,4 +1,4 @@
-package ru.netology.nmedia.util
+package ru.netology.nerecipe.util
 
 /*
  *  Copyright 2017 Google Inc.

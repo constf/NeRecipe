@@ -2,10 +2,7 @@ package ru.netology.nerecipe.adapter
 
 
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -14,9 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nerecipe.databinding.RecipesDetailsBinding
 import ru.netology.nerecipe.dto.Recipe
 import ru.netology.nerecipe.viewModel.RecipesFeederHelper
-import ru.netology.nerecipe.viewModel.RecipesViewModel
-import java.lang.Integer.min
-import kotlin.math.max
 
 class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: String) : ListAdapter<Recipe, RecipesAdapter.RecipeViewHolder>(RecipeDiffCallback) {
 
@@ -48,10 +42,13 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
                 categoryText.text =
                     helper.getCategoryName(item.category) ?: "Error fetching the Category!"
 
-                if (item.isFavourite)
-                    imageLikeShow.isVisible = true
-                else
-                    imageLikeShow.isVisible = false
+
+                imageLikeShow.isVisible = item.isFavourite
+
+//                if (item.isFavourite)
+//                    imageLikeShow.isVisible = true
+//                else
+//                    imageLikeShow.isVisible = false
 
                 if (bindType == RECIPES_ADAPTER) { // if we show recipes scree
                     recipeCardContainer.setOnClickListener {
@@ -87,8 +84,8 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
     inner class RecipesHelperCallback: ItemTouchHelper.SimpleCallback(
         ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT){
 
-        var dragFrom: Int = -1
-        var dragTo: Int = -1
+        private var dragFrom: Int = -1
+        private var dragTo: Int = -1
 
         override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
             val fromPosition = viewHolder.bindingAdapterPosition
@@ -115,7 +112,8 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
 
             helper.updateRepoWithNewListFromTo(list, dragFrom, dragTo)
 
-            dragFrom = -1; dragTo = -1;
+            dragFrom = -1
+            dragTo = -1
         }
 
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {

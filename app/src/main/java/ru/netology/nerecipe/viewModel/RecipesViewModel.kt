@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
 import ru.netology.nerecipe.data.CategoryRepository
 import ru.netology.nerecipe.data.RecipeRepository
 import ru.netology.nerecipe.data.RecipeStepsRepository
@@ -19,26 +18,19 @@ import ru.netology.nerecipe.db.AppDb
 import ru.netology.nerecipe.dto.RecCategory
 import ru.netology.nerecipe.dto.Recipe
 import ru.netology.nerecipe.dto.RecipeStep
-import ru.netology.nmedia.util.SingleLiveEvent
-import java.io.File
-import java.io.FileOutputStream
+import ru.netology.nerecipe.util.SingleLiveEvent
 import java.io.IOException
-import java.io.OutputStream
 import kotlin.math.max
 import kotlin.math.min
 
 const val NEW_ITEM_ID = 0L
 
-class RecipesViewModel(val inApplication: Application):
+class RecipesViewModel(private val inApplication: Application):
     AndroidViewModel(inApplication), RecipesFeederHelper, StepsDetailsHelper, CategoriesHelper {
 
 
     var tempBitMap: Bitmap? = null
-    private var delayedPicture: String? = null
-    var delePictureOnGoBack: Boolean = false
 
-
-    //
     var isNewRecipe: Boolean = false
     var isNewStep: Boolean = false
     var selectedSpinner: String? = "empty"
@@ -75,7 +67,6 @@ class RecipesViewModel(val inApplication: Application):
     val stepsAllData by recStepsRepo::dataAll
     val editedStepsList: MutableList<RecipeStep> = mutableListOf()
     private var editStep: RecipeStep? = null
-    private var editedStepsCount = 1L
     var stepUri: Uri? = null
     fun saveStep(step: RecipeStep) = recStepsRepo.save(step)
     fun removeStep(step: RecipeStep) = recStepsRepo.remove(step.id)
@@ -118,8 +109,6 @@ class RecipesViewModel(val inApplication: Application):
 
 
     // Events in UI
-    val navigateToRecipeEditScreen = SingleLiveEvent<Unit>()
-    val navigateToNewRecipeScreen = SingleLiveEvent<Unit>()
     val navigateToNewStepEdit = SingleLiveEvent<Unit>()
     val chooseThePicture = SingleLiveEvent<RecipeStep?>()
 
@@ -157,9 +146,6 @@ class RecipesViewModel(val inApplication: Application):
         recipeNamesFilter.value = newText
     }
 
-    fun clearShowRecipe() {
-        showRecipe.value = null
-    }
 
     fun addNewRecipe() {
         editedStepsList.clear()
@@ -227,11 +213,11 @@ class RecipesViewModel(val inApplication: Application):
             }
         }
 
-        // get recipes steps list of lists, to avoid cyclic re-write of recipie id into the step!
+        // get recipes steps list of lists, to avoid cyclic re-write of recipe id into the step!
         // here, it is the same order of index as in the next "forEach"
         val listOfLists: MutableList<List<RecipeStep>> = mutableListOf()
         updatedList.forEach { rwRecipe ->
-            listOfLists.add(recStepsRepo.getStepsListWithRecId(rwRecipe.id) ?: emptyList())
+            listOfLists.add(recStepsRepo.getStepsListWithRecId(rwRecipe.id))
         }
 
         // now, save new order in DB
@@ -289,7 +275,7 @@ class RecipesViewModel(val inApplication: Application):
         }
 
         updatedList.forEachIndexed { index, rwStep ->
-            val step = getStepById(inListIds[index]) ?: return // get the current item from DB with this ID
+            val step = getStepById(inListIds[index]) // get the current item from DB with this ID
             val updatedStep = rwStep.copy(id = step.id)
             recStepsRepo.updateStep(updatedStep)
         }
@@ -302,7 +288,7 @@ class RecipesViewModel(val inApplication: Application):
 
     fun addNewEditedStep() {
         val recId = editRecipe.value?.id ?: return
-        val step: RecipeStep = RecipeStep(NEW_ITEM_ID, recId, "")
+        val step = RecipeStep(NEW_ITEM_ID, recId, "")
         isNewStep = true
         val stepId = saveStep(step)
         editStep = step.copy(id = stepId)
@@ -324,11 +310,11 @@ class RecipesViewModel(val inApplication: Application):
 
     fun deleteAllCategories() = categoriesRepo.deleteAllCategories()
 
-    override fun setCetegoryVisible(id: Long) {
+    override fun setCategoryVisible(id: Long) {
         categoriesRepo.setVisible(id)
     }
 
-    override fun setCetegoryInvisible(id: Long) {
+    override fun setCategoryInvisible(id: Long) {
         categoriesRepo.setNotVisible(id)
     }
 
@@ -382,7 +368,7 @@ class RecipesViewModel(val inApplication: Application):
         editStep = null
     }
 
-    fun getRecipeById(id: Long): Recipe? {
+    fun getRecipeById(id: Long): Recipe {
         return recipesRepo.getRecipeById(id)
     }
 

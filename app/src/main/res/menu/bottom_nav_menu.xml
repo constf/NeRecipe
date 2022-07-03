@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_item_recipes_list"
+        android:id="@+id/recipesFeederFragment"
         android:title="@string/item_recipes_list_string"
         android:icon="@drawable/ic_menu_recipes_list"
         android:enabled="true"
         />
 
     <item
-        android:id="@+id/menu_item_favourite_list"
+        android:id="@+id/favouriteFeederFragment"
         android:title="@string/item_favourites_list_string"
         android:icon="@drawable/ic_menu_favourite"
         android:enabled="true"
         />
 
     <item
-        android:id="@+id/menu_item_filter_list"
+        android:id="@+id/categoriesFeederFragment"
         android:title="@string/item_filter_string"
         android:icon="@drawable/ic_menu_filter"
         android:enabled="true"

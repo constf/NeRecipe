@@ -41,4 +41,10 @@
     <string name="rec_feeder_layout_string01">\n\n\n\n\n\n\nСейчас спиок рецептов ПУСТ! Пожалуйста, нажмите на кнопку (+) для создания и добавления репепта.</string>
     <string name="fav_feeder_layout_string01">Сейчас список избранных рецептов ПУСТ! Для добавления рецепта сюда, нажмите на (избранное) при просмотре рецепта.</string>
     <string name="new_step_layout_string01">Добавить</string>
+    <string name="nav_main_string01">NeRecipe</string>
+    <string name="nav_main_string02">Просмотр рецепта</string>
+    <string name="nav_main_string03">Рецепт:  новый / редактирование</string>
+    <string name="nav_main_string06">Категории</string>
+    <string name="nav_main_string04">Новое описание</string>
+    <string name="nav_main_string05">Избранные рецепты</string>
 </resources>

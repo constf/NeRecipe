@@ -1,7 +1,6 @@
 package ru.netology.nerecipe.adapter
 
 
-import android.icu.lang.UCharacter.GraphemeClusterBreak.V
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CompoundButton
@@ -13,7 +12,6 @@ import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.CategoryDetailCheckboxBinding
 import ru.netology.nerecipe.dto.RecCategory
 import ru.netology.nerecipe.viewModel.CategoriesHelper
-import java.util.*
 
 class CategoriesAdapter(private val helper: CategoriesHelper): ListAdapter<RecCategory, CategoriesAdapter.CatViewHolder>(CategoryDiffCallback) {
 
@@ -46,14 +44,14 @@ class CategoriesAdapter(private val helper: CategoriesHelper): ListAdapter<RecCa
 //                    }
 
                     if (isChecked){ // If user selected the category
-                        helper.setCetegoryVisible(item.id)
+                        helper.setCategoryVisible(item.id)
                         checkboxCategory.tag = TAG_PROCESS
                         return@setOnCheckedChangeListener
                     }
 
                     val num = helper.getNumberOfSelectedCategories()
                     if (num > 1){ // If user de-selected the category and we have enough, 2 and more
-                        helper.setCetegoryInvisible(item.id)
+                        helper.setCategoryInvisible(item.id)
                         checkboxCategory.tag = TAG_PROCESS
                         return@setOnCheckedChangeListener
                     }

@@ -1,31 +1,22 @@
 package ru.netology.nerecipe.ui
 
-import android.app.Activity
-import android.app.ProgressDialog.show
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.view.doOnDetach
-import androidx.core.view.doOnNextLayout
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.commit
 import androidx.fragment.app.setFragmentResult
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.adapter.StepsAdapter
 import ru.netology.nerecipe.databinding.FragmentRecipeNewBinding
 import ru.netology.nerecipe.dto.Recipe
-import ru.netology.nerecipe.dto.RecipeStep
 import ru.netology.nerecipe.viewModel.NEW_ITEM_ID
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
@@ -34,7 +25,7 @@ const val IMAGE_PICK_KEY = 10001
 class RecipeNewFragment :
     Fragment(), AdapterView.OnItemSelectedListener {
 
-    private val viewModel: RecipesViewModel by activityViewModels<RecipesViewModel>()
+    private val viewModel: RecipesViewModel by activityViewModels()
     private var _binding: FragmentRecipeNewBinding? = null
     private val binding get() = _binding
 
@@ -59,7 +50,7 @@ class RecipeNewFragment :
                     val curEditRecipe = viewModel.getEditedRecipe() ?: return false
                     val stepsList = viewModel.stepsAllData.value?.filter { it.recipeId == curEditRecipe.id }
 
-                    if (recipeName.text.toString().isNullOrBlank() || authorName.text.toString().isNullOrBlank() || stepsList?.size == 0){
+                    if (recipeName.text.toString().isBlank() || authorName.text.toString().isBlank() || stepsList?.size == 0){
                         Toast.makeText(context, getString(R.string.recipe_new_string01), Toast.LENGTH_SHORT)
                             .also { it.setGravity(Gravity.CENTER_VERTICAL, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT) }
                             .show()
@@ -76,17 +67,13 @@ class RecipeNewFragment :
 
                     viewModel.onSaveEditedRecipe(recipeSave)
                 }
-                if (viewModel.isNewRecipe)
-                    requireActivity().setTitle("NeRecipe")
-                else
-                    requireActivity().setTitle(getString(R.string.recipe_new_string02) + viewModel.getEditedRecipe()?.name)
 
                 val resultBundle = Bundle(1)
                 val content = RESULT_VALUE
                 resultBundle.putString(RESULT_KEY, content)
                 setFragmentResult(REQUEST_KEY, resultBundle)
 
-                parentFragmentManager.popBackStack()
+                findNavController().popBackStack()
                 true
             }
 
@@ -96,7 +83,6 @@ class RecipeNewFragment :
             }
 
             else -> super.onOptionsItemSelected(item)
-
         }
     }
 
@@ -107,10 +93,7 @@ class RecipeNewFragment :
     ): View? {
         _binding = FragmentRecipeNewBinding.inflate(inflater, container, false)
 
-        activity?.actionBar?.title = "New Recipe"
-
-
-        // Initializing the View fileds
+        // Initializing the View fields
         val recipe = viewModel.getEditedRecipe() ?: return binding?.root
         var selectedSpinner = viewModel.getCategoryName(recipe.category) ?: getString(R.string.recipe_new_string03)
 
@@ -126,13 +109,6 @@ class RecipeNewFragment :
             binding?.imageFavourite?.isChecked = tr!!.isFavourite
             selectedSpinner = viewModel.getCategoryName(tr.category) ?: getString(R.string.recipe_new_string03)
         }
-
-        requireActivity().setTitle(
-            if ( recipe.name.isBlank() || recipe.name.isEmpty() )
-                getString(R.string.recipe_new_string04)
-            else
-                getString(R.string.recipe_new_string05) + recipe.name
-        )
 
         // Creating a drop down list for categories
         val spinner = binding?.categoryChoose
@@ -168,10 +144,7 @@ class RecipeNewFragment :
 
         viewModel.navigateToNewStepEdit.observe(viewLifecycleOwner) {
             if (viewModel.getEditedStep() == null) return@observe
-            parentFragmentManager.commit {
-                addToBackStack(null)
-                replace(R.id.app_fragment_container, StepNewFragment())
-            }
+            findNavController().navigate(R.id.action_recipeNewFragment_to_stepNewFragment)
         }
 
         binding?.authorName?.doOnTextChanged { text, start, before, count ->
@@ -205,12 +178,6 @@ class RecipeNewFragment :
 
     }
 
-    private fun setTitlebarNameOnBack() {
-        if (viewModel.isNewRecipe)
-            requireActivity().setTitle("NeRecipe")
-        else
-            requireActivity().setTitle(getString(R.string.recipe_new_string02) + viewModel.getEditedRecipe()?.name)
-    }
 
     private fun goBackWithDialog() {
         val nameIsSame = viewModel.getEditedRecipe()?.name?.equals(binding?.recipeName?.text.toString()) ?: false
@@ -229,16 +196,14 @@ class RecipeNewFragment :
                 }.setPositiveButton(getString(R.string.recipe_new_string08)){ dialog, which ->
                     //viewModel.deleteUnsavedSteps()
                     if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
-                    setTitlebarNameOnBack()
                     viewModel.tempRecipe = null
-                    parentFragmentManager.popBackStack()
+                    findNavController().popBackStack()
                 }.show()
         } else {
             //viewModel.deleteUnsavedSteps()
             if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
-            setTitlebarNameOnBack()
             viewModel.tempRecipe = null
-            parentFragmentManager.popBackStack()
+            findNavController().popBackStack()
         }
     }
 

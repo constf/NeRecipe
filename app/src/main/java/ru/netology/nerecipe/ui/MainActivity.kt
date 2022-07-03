@@ -2,16 +2,21 @@ package ru.netology.nerecipe.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.TextUtils.replace
-import android.view.Menu
-import android.view.MenuItem
-import androidx.appcompat.app.AppCompatDelegate.FEATURE_SUPPORT_ACTION_BAR
-import androidx.fragment.app.commit
+import androidx.activity.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.ActivityMainBinding
+import ru.netology.nerecipe.viewModel.RecipesViewModel
 
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var navController: NavController
+    private val viewModel: RecipesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,47 +24,42 @@ class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.bottomNavBar.setOnNavigationItemSelectedListener { item ->
-            when(item.itemId) {
-                R.id.menu_item_recipes_list -> { // Opens the first and main screen
-                    binding.bottomNavBar.menu.getItem(0).setChecked(true)
-                    supportFragmentManager.commit {
-                        addToBackStack(null)
-                        replace(R.id.app_fragment_container, RecipesFeederFragment(), RecipesFeederFragment.TAG)
-                    }
-                    true
-                }
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
-                R.id.menu_item_favourite_list -> { // Opens the screen with favourite recipes
-                    binding.bottomNavBar.menu.getItem(1).setChecked(true)
-                    supportFragmentManager.commit {
-                        addToBackStack(null)
-                        replace(R.id.app_fragment_container, FavouriteFeederFragment(), FavouriteFeederFragment.TAG)
-                    }
-                    true
-                }
+        setupActionBarWithNavController(navController)
 
-                R.id.menu_item_filter_list -> { // Opens the screen with categories to see and choose
-                    binding.bottomNavBar.menu.getItem(2).setChecked(true)
-                    supportFragmentManager.commit {
-                        addToBackStack(null)
-                        replace(R.id.app_fragment_container, CategoriesFeederFragment(), CategoriesFeederFragment.TAG)
-                    }
-                    true
-                }
+        binding.bottomNavBar.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener(ChangeTitlesAndSuppressUpButton())
 
-                else -> false
-            }
-
-        }
-
-        if (supportFragmentManager.findFragmentByTag(RecipesFeederFragment.TAG) == null) {
-            supportFragmentManager.commit {
-                add(R.id.app_fragment_container, RecipesFeederFragment(), RecipesFeederFragment.TAG)
-            }
-        }
     }
 
 
+    inner class ChangeTitlesAndSuppressUpButton: NavController.OnDestinationChangedListener {
+        override fun onDestinationChanged(
+            controller: NavController,
+            destination: NavDestination,
+            arguments: Bundle?
+        ) {
+            supportActionBar?.setDisplayShowHomeEnabled(false)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+
+            supportActionBar?.title = when(destination.id){
+                R.id.recipesFeederFragment -> getString(R.string.nav_main_string01)
+                R.id.favouriteFeederFragment -> getString(R.string.nav_main_string05)
+                R.id.categoriesFeederFragment -> getString((R.string.nav_main_string06))
+                R.id.recipesCardFragment -> getString(R.string.recipe_new_string02) + viewModel.showRecipe.value?.name
+                R.id.recipeNewFragment -> {
+                    val recipe = viewModel.editRecipe.value ?: return
+                    if(recipe.name.isBlank() || recipe.name.isEmpty())
+                        getString(R.string.recipe_new_string04)
+                    else
+                        getString(R.string.recipe_new_string05) + recipe.name
+                }
+                R.id.stepNewFragment -> getString(R.string.nav_main_string04)
+                else -> getString(R.string.nav_main_string01)
+            }
+        }
+    }
 
 }
