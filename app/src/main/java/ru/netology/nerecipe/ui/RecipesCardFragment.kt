@@ -56,7 +56,7 @@ class RecipesCardFragment : Fragment() {
 
         binding?.stepsList?.adapter = adapter
 
-        viewModel.stepsFilteredData.observe(viewLifecycleOwner) { steps ->
+        viewModel.stepsAllData.observe(viewLifecycleOwner) { steps ->
             adapter.submitList(steps.filter { it.recipeId == recipe.id })
         }
 
