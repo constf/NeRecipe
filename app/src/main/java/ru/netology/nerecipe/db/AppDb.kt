@@ -6,8 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import ru.netology.nerecipe.dao.*
 
-@Database(entities = [RecCategoryEntity::class, RecipeEntity::class, RecStepEntity::class], version = 3)
-abstract class AppDb: RoomDatabase() {
+@Database(
+    entities = [RecCategoryEntity::class, RecipeEntity::class, RecStepEntity::class],
+    version = 3
+)
+abstract class AppDb : RoomDatabase() {
     abstract val categoryDao: CategoryDao
     abstract val recipeDao: RecipesDao
     abstract val recStepsDao: RecStepsDao

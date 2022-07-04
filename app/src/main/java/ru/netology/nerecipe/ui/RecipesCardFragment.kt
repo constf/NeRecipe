@@ -27,7 +27,7 @@ class RecipesCardFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
             findNavController().popBackStack()
         }
     }
@@ -38,7 +38,11 @@ class RecipesCardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        val getRecipe = viewModel.showRecipe.value ?: return super.onCreateView(inflater, container, savedInstanceState)
+        val getRecipe = viewModel.showRecipe.value ?: return super.onCreateView(
+            inflater,
+            container,
+            savedInstanceState
+        )
         val recipe = viewModel.getRecipeById(getRecipe.id)
 
         _binding = FragmentRecipeCardBinding.inflate(inflater, container, false)
@@ -102,9 +106,10 @@ class RecipesCardFragment : Fragment() {
             viewModel.setFavourite(recipe.id, button.isChecked)
         }
 
-        setFragmentResultListener(RecipeNewFragment.REQUEST_KEY){ requestKey, bundle ->
+        setFragmentResultListener(RecipeNewFragment.REQUEST_KEY) { requestKey, bundle ->
             if (requestKey != RecipeNewFragment.REQUEST_KEY) return@setFragmentResultListener
-            val result = bundle.getString(RecipeNewFragment.RESULT_KEY) ?: return@setFragmentResultListener
+            val result =
+                bundle.getString(RecipeNewFragment.RESULT_KEY) ?: return@setFragmentResultListener
             if (result != RecipeNewFragment.RESULT_VALUE) return@setFragmentResultListener
 
             val updateRecipe = viewModel.getRecipeById(getRecipe.id)

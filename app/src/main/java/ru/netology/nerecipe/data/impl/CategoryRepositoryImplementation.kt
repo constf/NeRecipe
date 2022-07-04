@@ -9,9 +9,9 @@ import ru.netology.nerecipe.dao.toModel
 import ru.netology.nerecipe.data.CategoryRepository
 import ru.netology.nerecipe.dto.RecCategory
 
-class CategoryRepositoryImplementation(private val dao: CategoryDao): CategoryRepository {
+class CategoryRepositoryImplementation(private val dao: CategoryDao) : CategoryRepository {
     private var categories: List<RecCategory> = emptyList()
-        get() = checkNotNull(data.value){"Categories data value should not be null!"}
+        get() = checkNotNull(data.value) { "Categories data value should not be null!" }
 
     override lateinit var data: LiveData<List<RecCategory>>
 

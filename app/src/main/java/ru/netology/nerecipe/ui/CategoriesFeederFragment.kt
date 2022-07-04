@@ -13,7 +13,7 @@ import ru.netology.nerecipe.adapter.CategoriesAdapter
 import ru.netology.nerecipe.databinding.FragmentCategoriesFeederBinding
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
-class CategoriesFeederFragment: Fragment() {
+class CategoriesFeederFragment : Fragment() {
     private val viewModel: RecipesViewModel by activityViewModels()
     private var _binding: FragmentCategoriesFeederBinding? = null
     private val binding get() = _binding
@@ -22,7 +22,8 @@ class CategoriesFeederFragment: Fragment() {
         super.onCreate(savedInstanceState)
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            Toast.makeText(context, getString(R.string.cat_feeder_string01), Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.cat_feeder_string01), Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -36,7 +37,7 @@ class CategoriesFeederFragment: Fragment() {
         val adapter = CategoriesAdapter(viewModel)
         binding?.categoriesList?.adapter = adapter
 
-        viewModel.catData.observe(viewLifecycleOwner){ categories ->
+        viewModel.catData.observe(viewLifecycleOwner) { categories ->
             adapter.submitList(categories)
         }
 

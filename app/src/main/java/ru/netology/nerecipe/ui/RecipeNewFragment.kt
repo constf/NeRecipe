@@ -33,8 +33,8 @@ class RecipeNewFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
+
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
             goBackWithDialog()
         }
     }
@@ -44,24 +44,39 @@ class RecipeNewFragment :
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.recipe_new_options_save -> {
-                with(binding!!){
+                with(binding!!) {
                     val curEditRecipe = viewModel.getEditedRecipe() ?: return false
-                    val stepsList = viewModel.stepsAllData.value?.filter { it.recipeId == curEditRecipe.id }
+                    val stepsList =
+                        viewModel.stepsAllData.value?.filter { it.recipeId == curEditRecipe.id }
 
-                    if (recipeName.text.toString().isBlank() || authorName.text.toString().isBlank() || stepsList?.size == 0){
-                        Toast.makeText(context, getString(R.string.recipe_new_string01), Toast.LENGTH_SHORT)
-                            .also { it.setGravity(Gravity.CENTER_VERTICAL, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT) }
+                    if (recipeName.text.toString().isBlank() || authorName.text.toString()
+                            .isBlank() || stepsList?.size == 0
+                    ) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.recipe_new_string01),
+                            Toast.LENGTH_SHORT
+                        )
+                            .also {
+                                it.setGravity(
+                                    Gravity.CENTER_VERTICAL,
+                                    Gravity.AXIS_X_SHIFT,
+                                    Gravity.AXIS_Y_SHIFT
+                                )
+                            }
                             .show()
                         return true
                     }
 
                     val selectedSpinner = viewModel.selectedSpinner
                     val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
-                    val recipeSave = viewModel.getEditedRecipe()?.copy(name = recipeName.text.toString(),
+                    val recipeSave = viewModel.getEditedRecipe()?.copy(
+                        name = recipeName.text.toString(),
                         author = authorName.text.toString(), category = catId,
-                        isFavourite = imageFavourite.isChecked) ?: return false
+                        isFavourite = imageFavourite.isChecked
+                    ) ?: return false
 
                     authorName.requestFocus() // Saving the last edited step in any case with focusChange event in StepsAdapter
 
@@ -95,7 +110,8 @@ class RecipeNewFragment :
 
         // Initializing the View fields
         val recipe = viewModel.getEditedRecipe() ?: return binding?.root
-        var selectedSpinner = viewModel.getCategoryName(recipe.category) ?: getString(R.string.recipe_new_string03)
+        var selectedSpinner =
+            viewModel.getCategoryName(recipe.category) ?: getString(R.string.recipe_new_string03)
 
         if (viewModel.tempRecipe == null) {
             binding?.recipeName?.setText(recipe.name)
@@ -107,12 +123,14 @@ class RecipeNewFragment :
             binding?.recipeName?.setText(tr?.name)
             binding?.authorName?.setText(tr?.author)
             binding?.imageFavourite?.isChecked = tr!!.isFavourite
-            selectedSpinner = viewModel.getCategoryName(tr.category) ?: getString(R.string.recipe_new_string03)
+            selectedSpinner =
+                viewModel.getCategoryName(tr.category) ?: getString(R.string.recipe_new_string03)
         }
 
         // Creating a drop down list for categories
         val spinner = binding?.categoryChoose
-        val arrAdapter = ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
+        val arrAdapter =
+            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item)
 
         viewModel.catData.observe(viewLifecycleOwner) { catList ->
             arrAdapter.clear()
@@ -150,18 +168,40 @@ class RecipeNewFragment :
         binding?.authorName?.doOnTextChanged { text, start, before, count ->
             val selectedSpinner = viewModel.selectedSpinner
             val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
-            viewModel.tempRecipe = viewModel.tempRecipe?.copy(author = text.toString(), category = catId) ?: Recipe(NEW_ITEM_ID, author = text.toString(), name = "", category = catId, isFavourite = false )
+            viewModel.tempRecipe =
+                viewModel.tempRecipe?.copy(author = text.toString(), category = catId) ?: Recipe(
+                    NEW_ITEM_ID,
+                    author = text.toString(),
+                    name = "",
+                    category = catId,
+                    isFavourite = false
+                )
         }
         binding?.recipeName?.doOnTextChanged { text, start, before, count ->
             val selectedSpinner = viewModel.selectedSpinner
             val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
-            viewModel.tempRecipe = viewModel.tempRecipe?.copy(name = text.toString(), category = catId) ?: Recipe(NEW_ITEM_ID, name = text.toString(), author = "", category = catId, isFavourite = false )
+            viewModel.tempRecipe =
+                viewModel.tempRecipe?.copy(name = text.toString(), category = catId) ?: Recipe(
+                    NEW_ITEM_ID,
+                    name = text.toString(),
+                    author = "",
+                    category = catId,
+                    isFavourite = false
+                )
         }
         binding?.imageFavourite?.setOnClickListener {
             val selectedSpinner = viewModel.selectedSpinner
             val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
             val button = it as MaterialButton
-            viewModel.tempRecipe = viewModel.tempRecipe?.copy(isFavourite = button.isChecked, category = catId) ?: Recipe(NEW_ITEM_ID, name = "", author = "", category = catId, isFavourite = button.isChecked )
+            viewModel.tempRecipe =
+                viewModel.tempRecipe?.copy(isFavourite = button.isChecked, category = catId)
+                    ?: Recipe(
+                        NEW_ITEM_ID,
+                        name = "",
+                        author = "",
+                        category = catId,
+                        isFavourite = button.isChecked
+                    )
         }
 
         return binding?.root
@@ -171,7 +211,13 @@ class RecipeNewFragment :
         viewModel.selectedSpinner = parent?.getItemAtPosition(pos) as String
         val selectedSpinner = viewModel.selectedSpinner
         val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
-        viewModel.tempRecipe = viewModel.tempRecipe?.copy(category = catId) ?: Recipe(NEW_ITEM_ID, name = "", author = "", category = catId, isFavourite = false)
+        viewModel.tempRecipe = viewModel.tempRecipe?.copy(category = catId) ?: Recipe(
+            NEW_ITEM_ID,
+            name = "",
+            author = "",
+            category = catId,
+            isFavourite = false
+        )
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -180,28 +226,33 @@ class RecipeNewFragment :
 
 
     private fun goBackWithDialog() {
-        val nameIsSame = viewModel.getEditedRecipe()?.name?.equals(binding?.recipeName?.text.toString()) ?: false
-        val authorIsSame = viewModel.getEditedRecipe()?.author?.equals(binding?.authorName?.text.toString()) ?: false
+        val nameIsSame =
+            viewModel.getEditedRecipe()?.name?.equals(binding?.recipeName?.text.toString()) ?: false
+        val authorIsSame =
+            viewModel.getEditedRecipe()?.author?.equals(binding?.authorName?.text.toString())
+                ?: false
         val selectedSpinner = viewModel.selectedSpinner
         val catId = viewModel.getCatIdbyName(selectedSpinner) ?: 1L
         val catChanged = viewModel.getEditedRecipe()?.category != catId
         val recipeDiscard = viewModel.getEditedRecipe()
         //val addedSteps = viewModel.stepIdsList.size > 0
 
-        if (!nameIsSame || !authorIsSame || catChanged ) {
+        if (!nameIsSame || !authorIsSame || catChanged) {
             MaterialAlertDialogBuilder(requireContext())
                 .setMessage(getString(R.string.recipe_new_string06))
-                .setNegativeButton(getString(R.string.recipe_new_string07)){ dialog, which ->
+                .setNegativeButton(getString(R.string.recipe_new_string07)) { dialog, which ->
 
-                }.setPositiveButton(getString(R.string.recipe_new_string08)){ dialog, which ->
+                }.setPositiveButton(getString(R.string.recipe_new_string08)) { dialog, which ->
                     //viewModel.deleteUnsavedSteps()
-                    if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
+                    if (viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(
+                        recipeDiscard
+                    )
                     viewModel.tempRecipe = null
                     findNavController().popBackStack()
                 }.show()
         } else {
             //viewModel.deleteUnsavedSteps()
-            if ( viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
+            if (viewModel.isNewRecipe && recipeDiscard != null) viewModel.deleteRecipe(recipeDiscard)
             viewModel.tempRecipe = null
             findNavController().popBackStack()
         }

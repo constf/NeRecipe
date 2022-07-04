@@ -9,7 +9,7 @@ import ru.netology.nerecipe.dto.RecCategory
 data class RecCategoryEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id_cat")
-    val id:Long,
+    val id: Long,
 
     @ColumnInfo(name = "name_cat")
     val name: String,

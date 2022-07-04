@@ -15,8 +15,8 @@ import ru.netology.nerecipe.databinding.StepDetailsShowBinding
 import ru.netology.nerecipe.dto.RecipeStep
 import ru.netology.nerecipe.viewModel.StepsDetailsHelper
 
-class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType: String)
-    : ListAdapter<RecipeStep, StepsAdapter.StepViewHolder>(StepsDiffCallback) {
+class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType: String) :
+    ListAdapter<RecipeStep, StepsAdapter.StepViewHolder>(StepsDiffCallback) {
 
     private var helperCallback = StepsHelperCallback()
     private val mTouchHelper = ItemTouchHelper(helperCallback)
@@ -24,7 +24,7 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StepViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = StepDetailsShowBinding.inflate(inflater,parent, false)
+        val binding = StepDetailsShowBinding.inflate(inflater, parent, false)
 
         return StepViewHolder(binding)
     }
@@ -38,23 +38,24 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
         }
     }
 
-    fun attachRecyclerView(rw: RecyclerView){
+    fun attachRecyclerView(rw: RecyclerView) {
         mTouchHelper.attachToRecyclerView(rw)
         val en = helperCallback.isLongPressDragEnabled
         val ch = en
     }
 
 
-    inner class StepViewHolder(private val binding: StepDetailsShowBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class StepViewHolder(private val binding: StepDetailsShowBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun bindForShow(step: RecipeStep) {
-            with (binding) {
+            with(binding) {
                 stepContent.text = step.content
                 menuMore.isVisible = false
 
                 // Setting the image to show.
                 val name = step.picture
-                if (name == "empty"){
+                if (name == "empty") {
                     stepPicture.isVisible = false
                 } else {
                     stepPicture.isVisible = true
@@ -65,7 +66,7 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
 
         fun bindForEdit(step: RecipeStep) {
 
-            with (binding) {
+            with(binding) {
                 // No editing, just show the text
                 stepContent.text = step.content
                 menuMore.isVisible = true
@@ -75,7 +76,7 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
 
                 val picUri = step.pUri
 
-                if (name == "empty"){
+                if (name == "empty") {
                     stepPicture.isVisible = false
                 } else if (picUri == null) {
                     stepPicture.isVisible = true
@@ -93,12 +94,12 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
                     PopupMenu(it.context, it).apply {
                         inflate(R.menu.step_edit_options)
                         setOnMenuItemClickListener { item ->
-                            when(item.itemId) {
+                            when (item.itemId) {
                                 R.id.step_remove -> {
                                     MaterialAlertDialogBuilder(it.context)
                                         .setMessage(it.context.getString(R.string.steps_adapter_string01))
-                                        .setNegativeButton(it.context.getString(R.string.steps_adapter_string02)){ dialog, which -> }
-                                        .setPositiveButton(it.context.getString(R.string.steps_adapter_string03)){ dialog, which ->
+                                        .setNegativeButton(it.context.getString(R.string.steps_adapter_string02)) { dialog, which -> }
+                                        .setPositiveButton(it.context.getString(R.string.steps_adapter_string03)) { dialog, which ->
                                             helper.deleteEditedStep(step)
                                         }.show()
                                     true
@@ -112,7 +113,7 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
         }
     }
 
-    private object StepsDiffCallback: DiffUtil.ItemCallback<RecipeStep>() {
+    private object StepsDiffCallback : DiffUtil.ItemCallback<RecipeStep>() {
         override fun areItemsTheSame(oldItem: RecipeStep, newItem: RecipeStep): Boolean {
             return oldItem.id == newItem.id
         }
@@ -128,13 +129,18 @@ class StepsAdapter(private val helper: StepsDetailsHelper, private val bindType:
     }
 
 
-    inner class StepsHelperCallback: ItemTouchHelper.SimpleCallback(
-        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT){
+    inner class StepsHelperCallback : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT
+    ) {
 
         private var dragFrom: Int = -1
         private var dragTo: Int = -1
 
-        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
             val fromPosition = viewHolder.bindingAdapterPosition
             val toPosition = target.bindingAdapterPosition
 

@@ -15,7 +15,7 @@ import ru.netology.nerecipe.R
 import ru.netology.nerecipe.databinding.StepDetailsEditBinding
 import ru.netology.nerecipe.viewModel.RecipesViewModel
 
-class StepNewFragment: Fragment() {
+class StepNewFragment : Fragment() {
 
     private val viewModel: RecipesViewModel by activityViewModels()
     private var _binding: StepDetailsEditBinding? = null
@@ -25,7 +25,7 @@ class StepNewFragment: Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
 
-        val callback = requireActivity().onBackPressedDispatcher.addCallback(this){
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
             goBackWithDialog()
         }
     }
@@ -40,7 +40,7 @@ class StepNewFragment: Fragment() {
 
         val step = viewModel.getEditedStep()
 
-        with(binding){
+        with(binding) {
             stepContent.setText(step?.content)
 
             val picName = step?.picture
@@ -85,16 +85,27 @@ class StepNewFragment: Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.recipe_new_options_save -> {
-                with(binding){
-                    if (stepContent.text.toString().isBlank()){
-                        Toast.makeText(context, getString(R.string.step_new_string01), Toast.LENGTH_SHORT)
-                            .also { it.setGravity(Gravity.CENTER_VERTICAL, Gravity.AXIS_X_SHIFT, Gravity.AXIS_Y_SHIFT) }
+                with(binding) {
+                    if (stepContent.text.toString().isBlank()) {
+                        Toast.makeText(
+                            context,
+                            getString(R.string.step_new_string01),
+                            Toast.LENGTH_SHORT
+                        )
+                            .also {
+                                it.setGravity(
+                                    Gravity.CENTER_VERTICAL,
+                                    Gravity.AXIS_X_SHIFT,
+                                    Gravity.AXIS_Y_SHIFT
+                                )
+                            }
                             .show()
                         return true
                     }
 
                     val stepId = viewModel.getEditedStep()?.id ?: return true
-                    val newStep = viewModel.getStepById(stepId).copy(content = stepContent.text.toString())
+                    val newStep =
+                        viewModel.getStepById(stepId).copy(content = stepContent.text.toString())
                     viewModel.onSaveEditedStep(newStep)
                     viewModel.tempBitMap = null
                 }
@@ -135,19 +146,20 @@ class StepNewFragment: Fragment() {
 
 
     private fun goBackWithDialog() {
-        val textSame = viewModel.getEditedStep()?.content?.equals(binding.stepContent.text.toString()) ?: false
+        val textSame =
+            viewModel.getEditedStep()?.content?.equals(binding.stepContent.text.toString()) ?: false
         val pictureAdded = viewModel.getEditedStep()?.pUri != null
         val stepDiscard = viewModel.getEditedStep()
 
         if (!textSame || pictureAdded) {
             MaterialAlertDialogBuilder(requireContext())
                 .setMessage(getString(R.string.step_new_string02))
-                .setNegativeButton(getString(R.string.step_new_string03)){ dialog, which ->
+                .setNegativeButton(getString(R.string.step_new_string03)) { dialog, which ->
 
-                }.setPositiveButton(getString(R.string.step_new_string04)){ dialog, which ->
-                    if ( pictureAdded ) viewModel.deleteEditedStepPicture()
+                }.setPositiveButton(getString(R.string.step_new_string04)) { dialog, which ->
+                    if (pictureAdded) viewModel.deleteEditedStepPicture()
                     if (viewModel.tempBitMap != null) viewModel.saveTempBitmapToFile()
-                    if ( viewModel.isNewStep && stepDiscard != null){
+                    if (viewModel.isNewStep && stepDiscard != null) {
                         viewModel.removeStep(stepDiscard)
                         //viewModel.stepIdsList = viewModel.stepIdsList.filter { it != stepDiscard.id }.toMutableList()
                     }
@@ -156,9 +168,9 @@ class StepNewFragment: Fragment() {
                     findNavController().popBackStack()
                 }.show()
         } else {
-             if ( pictureAdded ) viewModel.deleteEditedStepPicture()
+            if (pictureAdded) viewModel.deleteEditedStepPicture()
             if (viewModel.tempBitMap != null) viewModel.saveTempBitmapToFile()
-            if (viewModel.isNewStep && stepDiscard != null){
+            if (viewModel.isNewStep && stepDiscard != null) {
                 viewModel.removeStep(stepDiscard)
                 //viewModel.stepIdsList = viewModel.stepIdsList.filter { it != stepDiscard.id }.toMutableList()
             }

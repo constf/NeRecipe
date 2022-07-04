@@ -2,7 +2,9 @@ package ru.netology.nerecipe.ui
 
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.widget.doOnTextChanged
@@ -25,14 +27,19 @@ class RecipesFeederFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            Toast.makeText(context, getString(R.string.rec_feeder_string01), Toast.LENGTH_LONG).show()
+            Toast.makeText(context, getString(R.string.rec_feeder_string01), Toast.LENGTH_LONG)
+                .show()
             val exit = requireActivity().onBackPressedDispatcher.addCallback {
                 requireActivity().finish()
             }
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         _binding = FragmentRecipesFeederBinding.inflate(inflater, container, false)
         if (binding == null) return super.onCreateView(inflater, container, savedInstanceState)
@@ -47,10 +54,10 @@ class RecipesFeederFragment : Fragment() {
 
         // set the filter string
         val filter = if (viewModel.recipeNamesFilter.value.isNullOrEmpty()) ""
-                     else  viewModel.recipeNamesFilter.value
+        else viewModel.recipeNamesFilter.value
         binding?.recipeNameFilterEdit?.setText(filter)
 
-        viewModel.catData.observe(viewLifecycleOwner){
+        viewModel.catData.observe(viewLifecycleOwner) {
             viewModel.initCategories()
         }
 
@@ -62,24 +69,24 @@ class RecipesFeederFragment : Fragment() {
             else
                 if (isEmptyState) hideEmptyState()
 
-            val filter = viewModel.recipeNamesFilter.value
-            if ( filter.isNullOrEmpty() ){
+            val filterRN = viewModel.recipeNamesFilter.value
+            if (filterRN.isNullOrEmpty()) {
                 adapter.submitList(recipes) // No filter applied
             } else {
                 adapter.submitList(recipes.filter { rec ->
-                    rec.name.contains(filter, true) // Apply a filer for recipes names
+                    rec.name.contains(filterRN, true) // Apply a filer for recipes names
                 })
             }
         }
 
         // Update the displayed by RW list of Recipes with the search filter entered by the user
-        viewModel.recipeNamesFilter.observe(viewLifecycleOwner) { filter ->
+        viewModel.recipeNamesFilter.observe(viewLifecycleOwner) { rnFilter ->
             val recData = viewModel.recData.value
-            if (filter.isNullOrEmpty()) {
+            if (rnFilter.isNullOrEmpty()) {
                 adapter.submitList(recData)
-            } else{
-                adapter.submitList(recData?.filter{ rec ->
-                    rec.name.contains(filter, true)
+            } else {
+                adapter.submitList(recData?.filter { rec ->
+                    rec.name.contains(rnFilter, true)
                 })
             }
         }
@@ -110,7 +117,7 @@ class RecipesFeederFragment : Fragment() {
             findNavController().navigate(R.id.action_recipesFeederFragment_to_recipeNewFragment)
         }
 
-        if (viewModel.tempRecipe != null && viewModel.editRecipe.value != null){
+        if (viewModel.tempRecipe != null && viewModel.editRecipe.value != null) {
             findNavController().navigate(R.id.action_recipesFeederFragment_to_recipeNewFragment)
         }
 

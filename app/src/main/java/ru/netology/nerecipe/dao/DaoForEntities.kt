@@ -6,16 +6,19 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RecipesDao {
 
-    @Query("SELECT * FROM recipes " +
-            "INNER JOIN categories ON categories.id_cat = recipes.category " +
-            "WHERE categories.show_or_not = 1")
+    @Query(
+        "SELECT * FROM recipes " +
+                "INNER JOIN categories ON categories.id_cat = recipes.category " +
+                "WHERE categories.show_or_not = 1"
+    )
     fun getAllFilteredRecipes(): Flow<List<RecipeEntity>>
 
-    @Query("SELECT * FROM recipes " +
-            "INNER JOIN categories ON categories.id_cat = recipes.category " +
-            "WHERE categories.show_or_not = 1")
+    @Query(
+        "SELECT * FROM recipes " +
+                "INNER JOIN categories ON categories.id_cat = recipes.category " +
+                "WHERE categories.show_or_not = 1"
+    )
     fun listAllFilteredRecipes(): List<RecipeEntity>
-
 
 
     @Query("SELECT * FROM recipes")
@@ -25,18 +28,22 @@ interface RecipesDao {
     fun listAllRecipes(): List<RecipeEntity>
 
 
-    @Query("SELECT * FROM recipes " +
-            "WHERE id_rec IN (:ids)")
+    @Query(
+        "SELECT * FROM recipes " +
+                "WHERE id_rec IN (:ids)"
+    )
     fun getRecipesList(ids: List<Long>): List<RecipeEntity> // for test purposes
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(newRecipe: RecipeEntity) : Long
+    fun insert(newRecipe: RecipeEntity): Long
 
     @Update
     fun updateExistingRecipe(recipe: RecipeEntity): Int
 
-    @Query("SELECT * FROM recipes " +
-            "WHERE id_rec = :getId LIMIT 1")
+    @Query(
+        "SELECT * FROM recipes " +
+                "WHERE id_rec = :getId LIMIT 1"
+    )
     fun getRecipeById(getId: Long): RecipeEntity
 
     @Query("DELETE FROM recipes WHERE id_rec = :remId")
@@ -45,9 +52,11 @@ interface RecipesDao {
     @Query("DELETE FROM recipes")
     fun clearAll()
 
-    @Query("UPDATE recipes SET " +
-            "is_favourite_rec = CASE WHEN :favourite THEN 1 ELSE 0 END " +
-            "WHERE id_rec = :id")
+    @Query(
+        "UPDATE recipes SET " +
+                "is_favourite_rec = CASE WHEN :favourite THEN 1 ELSE 0 END " +
+                "WHERE id_rec = :id"
+    )
     fun setFavourite(id: Long, favourite: Boolean)
 }
 
@@ -56,21 +65,27 @@ interface RecStepsDao {
     @Query("SELECT * FROM recipe_steps ORDER BY id_step ASC")
     fun getAllRecipeSteps(): Flow<List<RecStepEntity>>
 
-    @Query("SELECT * FROM recipe_steps " +
-            "INNER JOIN recipes ON recipes.id_rec = recipe_steps.rec_id " +
-            "INNER JOIN categories ON categories.id_cat = recipes.category WHERE categories.show_or_not = 1 " +
-            "ORDER BY recipe_steps.id_step ASC")
+    @Query(
+        "SELECT * FROM recipe_steps " +
+                "INNER JOIN recipes ON recipes.id_rec = recipe_steps.rec_id " +
+                "INNER JOIN categories ON categories.id_cat = recipes.category WHERE categories.show_or_not = 1 " +
+                "ORDER BY recipe_steps.id_step ASC"
+    )
     fun getFilteredRecipeSteps(): Flow<List<RecStepEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(newStep: RecStepEntity): Long
 
-    @Query("SELECT * FROM recipe_steps " +
-            "WHERE id_step = :getId LIMIT 1")
+    @Query(
+        "SELECT * FROM recipe_steps " +
+                "WHERE id_step = :getId LIMIT 1"
+    )
     fun getStepById(getId: Long): RecStepEntity
 
-    @Query("SELECT * FROM recipe_steps " +
-            "WHERE rec_id = :getRecId")
+    @Query(
+        "SELECT * FROM recipe_steps " +
+                "WHERE rec_id = :getRecId"
+    )
     fun getStepsWithRecipeId(getRecId: Long): List<RecStepEntity>
 
 

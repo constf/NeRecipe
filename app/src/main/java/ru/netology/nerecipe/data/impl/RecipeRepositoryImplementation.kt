@@ -9,16 +9,17 @@ import ru.netology.nerecipe.dao.toModel
 import ru.netology.nerecipe.data.RecipeRepository
 import ru.netology.nerecipe.dto.Recipe
 
-class RecipeRepositoryImplementation(private val dao: RecipesDao): RecipeRepository {
+class RecipeRepositoryImplementation(private val dao: RecipesDao) : RecipeRepository {
     private var recipes: List<Recipe> = emptyList()
-        get() = checkNotNull(data.value) {"Recipes data value should not be empty!"}
+        get() = checkNotNull(data.value) { "Recipes data value should not be empty!" }
 
-    override val data: LiveData<List<Recipe>> = dao.getAllFilteredRecipes().asLiveData().map { recList ->
-        recList.map { it.toModel() }
-    }
+    override val data: LiveData<List<Recipe>> =
+        dao.getAllFilteredRecipes().asLiveData().map { recList ->
+            recList.map { it.toModel() }
+        }
 
     override val allData: LiveData<List<Recipe>> = dao.getAllRecipes().asLiveData().map { recList ->
-        recList.map{ it.toModel() }
+        recList.map { it.toModel() }
     }
 
 

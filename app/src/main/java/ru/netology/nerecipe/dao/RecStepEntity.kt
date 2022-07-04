@@ -6,10 +6,13 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import ru.netology.nerecipe.dto.RecipeStep
 
-@Entity(tableName = "recipe_steps",
-    foreignKeys = [ForeignKey(entity = RecipeEntity::class,
-    parentColumns = ["id_rec"], childColumns = ["rec_id"],
-    onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.NO_ACTION)]
+@Entity(
+    tableName = "recipe_steps",
+    foreignKeys = [ForeignKey(
+        entity = RecipeEntity::class,
+        parentColumns = ["id_rec"], childColumns = ["rec_id"],
+        onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.NO_ACTION
+    )]
 )
 data class RecStepEntity(
     @PrimaryKey(autoGenerate = true)

@@ -47,4 +47,7 @@
     <string name="nav_main_string06">Категории</string>
     <string name="nav_main_string04">Новое описание</string>
     <string name="nav_main_string05">Избранные рецепты</string>
+    <string name="fragment_category_xml_string01">Category</string>
+    <string name="step_edit_xml_string01">Описание шага рецепта</string>
+    <string name="step_edit_xml_string02">Удалить фото</string>
 </resources>

@@ -24,7 +24,11 @@ class FavouriteFeederFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         val callback = requireActivity().onBackPressedDispatcher.addCallback(this) {
-            Toast.makeText(context, context?.getString(R.string.fav_feeder_string01), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context?.getString(R.string.fav_feeder_string01),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -41,11 +45,11 @@ class FavouriteFeederFragment : Fragment() {
         viewModel.isFavouriteShow = true
 
         viewModel.allRecipesData.observe(viewLifecycleOwner) { recipes ->
-            if(recipes.filter { it.isFavourite }.size == 0)
+            if (recipes.filter { it.isFavourite }.size == 0)
                 showEmptyStateFavourites()
             else if (isEmptyState) hideEmptyStateFavourites()
 
-            adapter.submitList(recipes.filter{ it.isFavourite })
+            adapter.submitList(recipes.filter { it.isFavourite })
         }
 
         viewModel.showRecipe.observe(viewLifecycleOwner) { recipe ->

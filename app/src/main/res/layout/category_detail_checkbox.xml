@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="Category"
+        android:text="@string/fragment_category_xml_string01"
         android:gravity="start|center_vertical"
         android:layoutDirection="rtl"
         />

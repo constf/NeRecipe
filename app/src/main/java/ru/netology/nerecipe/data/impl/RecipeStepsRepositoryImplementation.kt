@@ -9,18 +9,20 @@ import ru.netology.nerecipe.dao.toModel
 import ru.netology.nerecipe.data.RecipeStepsRepository
 import ru.netology.nerecipe.dto.RecipeStep
 
-class RecipeStepsRepositoryImplementation(private val dao: RecStepsDao): RecipeStepsRepository {
+class RecipeStepsRepositoryImplementation(private val dao: RecStepsDao) : RecipeStepsRepository {
 
     private var stepsFiltered: List<RecipeStep> = emptyList()
-        get() = checkNotNull(dataFiltered.value) {"Steps data value should not be empty!"}
+        get() = checkNotNull(dataFiltered.value) { "Steps data value should not be empty!" }
 
-    override val dataAll: LiveData<List<RecipeStep>> = dao.getAllRecipeSteps().asLiveData().map { stepsList ->
-        stepsList.map { it.toModel() }
-    }
+    override val dataAll: LiveData<List<RecipeStep>> =
+        dao.getAllRecipeSteps().asLiveData().map { stepsList ->
+            stepsList.map { it.toModel() }
+        }
 
-    override val dataFiltered: LiveData<List<RecipeStep>> = dao.getFilteredRecipeSteps().asLiveData().map { filteredList ->
-        filteredList.map { it.toModel() }
-    }
+    override val dataFiltered: LiveData<List<RecipeStep>> =
+        dao.getFilteredRecipeSteps().asLiveData().map { filteredList ->
+            filteredList.map { it.toModel() }
+        }
 
     override fun getStepById(getId: Long): RecipeStep {
         return dao.getStepById(getId).toModel()

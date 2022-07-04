@@ -46,4 +46,7 @@
     <string name="nav_main_string04">New step</string>
     <string name="nav_main_string05">Favourite recipes</string>
     <string name="nav_main_string06">Categories</string>
+    <string name="fragment_category_xml_string01">Category</string>
+    <string name="step_edit_xml_string01">Enter recipe\'s step description here</string>
+    <string name="step_edit_xml_string02">Delete picture</string>
 </resources>

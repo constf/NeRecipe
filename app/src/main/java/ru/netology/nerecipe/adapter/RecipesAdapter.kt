@@ -12,14 +12,15 @@ import ru.netology.nerecipe.databinding.RecipesDetailsBinding
 import ru.netology.nerecipe.dto.Recipe
 import ru.netology.nerecipe.viewModel.RecipesFeederHelper
 
-class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: String) : ListAdapter<Recipe, RecipesAdapter.RecipeViewHolder>(RecipeDiffCallback) {
+class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: String) :
+    ListAdapter<Recipe, RecipesAdapter.RecipeViewHolder>(RecipeDiffCallback) {
 
-    private val helperCallback = RecipesHelperCallback()
+    private val helperCallback = RecipesHelperCallback() // Up and down movement - OK, swipe - disabled (with "and" operator)
     private val mTouchHelper = ItemTouchHelper(helperCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding =RecipesDetailsBinding.inflate(inflater,parent, false)
+        val binding = RecipesDetailsBinding.inflate(inflater, parent, false)
 
         return RecipeViewHolder(binding)
     }
@@ -28,11 +29,12 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
         holder.bind(getItem(position))
     }
 
-    fun attachRecyclerView(rw: RecyclerView){
+    fun attachRecyclerView(rw: RecyclerView) {
         mTouchHelper.attachToRecyclerView(rw)
     }
 
-    inner class RecipeViewHolder(val binding: RecipesDetailsBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class RecipeViewHolder(val binding: RecipesDetailsBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Recipe?) {
             if (item == null) return
             with(binding) {
@@ -65,7 +67,7 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
 
     }
 
-    private object RecipeDiffCallback:DiffUtil.ItemCallback<Recipe>(){
+    private object RecipeDiffCallback : DiffUtil.ItemCallback<Recipe>() {
         override fun areItemsTheSame(oldItem: Recipe, newItem: Recipe): Boolean {
             return oldItem.id == newItem.id
         }
@@ -81,13 +83,18 @@ class RecipesAdapter(val helper: RecipesFeederHelper, private val bindType: Stri
     }
 
 
-    inner class RecipesHelperCallback: ItemTouchHelper.SimpleCallback(
-        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT){
+    inner class RecipesHelperCallback : ItemTouchHelper.SimpleCallback(
+        ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT and ItemTouchHelper.RIGHT
+    ) {
 
         private var dragFrom: Int = -1
         private var dragTo: Int = -1
 
-        override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+        override fun onMove(
+            recyclerView: RecyclerView,
+            viewHolder: RecyclerView.ViewHolder,
+            target: RecyclerView.ViewHolder
+        ): Boolean {
             val fromPosition = viewHolder.bindingAdapterPosition
             val toPosition = target.bindingAdapterPosition
 

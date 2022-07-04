@@ -13,7 +13,8 @@ import ru.netology.nerecipe.databinding.CategoryDetailCheckboxBinding
 import ru.netology.nerecipe.dto.RecCategory
 import ru.netology.nerecipe.viewModel.CategoriesHelper
 
-class CategoriesAdapter(private val helper: CategoriesHelper): ListAdapter<RecCategory, CategoriesAdapter.CatViewHolder>(CategoryDiffCallback) {
+class CategoriesAdapter(private val helper: CategoriesHelper) :
+    ListAdapter<RecCategory, CategoriesAdapter.CatViewHolder>(CategoryDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CatViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -26,7 +27,8 @@ class CategoriesAdapter(private val helper: CategoriesHelper): ListAdapter<RecCa
         holder.bind(getItem(position))
     }
 
-    inner class CatViewHolder(private val binding: CategoryDetailCheckboxBinding): RecyclerView.ViewHolder(binding.root){
+    inner class CatViewHolder(private val binding: CategoryDetailCheckboxBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         fun bind(item: RecCategory?) {
             if (item == null) return
             with(binding) {
@@ -43,14 +45,14 @@ class CategoriesAdapter(private val helper: CategoriesHelper): ListAdapter<RecCa
 //                        return@setOnCheckedChangeListener
 //                    }
 
-                    if (isChecked){ // If user selected the category
+                    if (isChecked) { // If user selected the category
                         helper.setCategoryVisible(item.id)
                         checkboxCategory.tag = TAG_PROCESS
                         return@setOnCheckedChangeListener
                     }
 
                     val num = helper.getNumberOfSelectedCategories()
-                    if (num > 1){ // If user de-selected the category and we have enough, 2 and more
+                    if (num > 1) { // If user de-selected the category and we have enough, 2 and more
                         helper.setCategoryInvisible(item.id)
                         checkboxCategory.tag = TAG_PROCESS
                         return@setOnCheckedChangeListener
@@ -61,14 +63,18 @@ class CategoriesAdapter(private val helper: CategoriesHelper): ListAdapter<RecCa
                     // it doesn't trigger the CheckChanged listener... looks like
                     checkboxCategory.tag = TAG_SKIP
                     buttonView.isChecked = true
-                    Toast.makeText(binding.root.context, binding.root.context.getString(R.string.cat_adapter_string01), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        binding.root.context,
+                        binding.root.context.getString(R.string.cat_adapter_string01),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
 
     }
 
-    private object CategoryDiffCallback: DiffUtil.ItemCallback<RecCategory>(){
+    private object CategoryDiffCallback : DiffUtil.ItemCallback<RecCategory>() {
         override fun areItemsTheSame(oldItem: RecCategory, newItem: RecCategory): Boolean {
             return oldItem.id == newItem.id
         }

@@ -25,7 +25,7 @@ import kotlin.math.min
 
 const val NEW_ITEM_ID = 0L
 
-class RecipesViewModel(private val inApplication: Application):
+class RecipesViewModel(private val inApplication: Application) :
     AndroidViewModel(inApplication), RecipesFeederHelper, StepsDetailsHelper, CategoriesHelper {
 
 
@@ -70,7 +70,10 @@ class RecipesViewModel(private val inApplication: Application):
     var stepUri: Uri? = null
     fun saveStep(step: RecipeStep) = recStepsRepo.save(step)
     fun removeStep(step: RecipeStep) = recStepsRepo.remove(step.id)
-    fun clearEditedStep() { editStep = null }
+    fun clearEditedStep() {
+        editStep = null
+    }
+
     fun getStepsWithRecId(id: Long) = recStepsRepo.getStepsListWithRecId(id)
 
     fun setEditedStepsPicture(picUri: Uri?) {
@@ -81,7 +84,6 @@ class RecipesViewModel(private val inApplication: Application):
         val stepId = step.id //This function is called from inside the observer of chooseThePicture
 
         stepUri = picUri
-
 
         // Extract the bitmap
         val inputStream = inApplication.contentResolver.openInputStream(picUri)
@@ -98,7 +100,7 @@ class RecipesViewModel(private val inApplication: Application):
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos)
             fos.flush()
             fos.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
@@ -111,7 +113,6 @@ class RecipesViewModel(private val inApplication: Application):
     // Events in UI
     val navigateToNewStepEdit = SingleLiveEvent<Unit>()
     val chooseThePicture = SingleLiveEvent<RecipeStep?>()
-
 
 
     override fun onChoosePictureClicked(step: RecipeStep) {
@@ -135,7 +136,7 @@ class RecipesViewModel(private val inApplication: Application):
 
     override fun getBitmapFromFile(name: String): Bitmap? {
         val file = inApplication.filesDir.resolve(name)
-        if ( !file.exists() ) return null
+        if (!file.exists()) return null
         val fis = inApplication.openFileInput(name)
         val bm = BitmapFactory.decodeStream(fis)
         fis.close()
@@ -175,14 +176,18 @@ class RecipesViewModel(private val inApplication: Application):
     override fun getCategoryName(id: Long) = getCatNameId(id)
 
 
-    override fun updateRepoWithNewListFromTo(list: List<Recipe>, dragFrom: Int, dragTo: Int): Boolean {
+    override fun updateRepoWithNewListFromTo(
+        list: List<Recipe>,
+        dragFrom: Int,
+        dragTo: Int
+    ): Boolean {
 
         val upDownMovement = dragFrom < dragTo
         val downUpMovement = dragFrom > dragTo
 
         val minIndex = min(dragFrom, dragTo)
         val maxIndex = max(dragFrom, dragTo)
-        val rwSubList = list.subList(minIndex, maxIndex+1)
+        val rwSubList = list.subList(minIndex, maxIndex + 1)
         val inListIds = rwSubList.map { it.id }.sorted() //order of IDs in db
 
         if (inListIds.size != rwSubList.size) return false
@@ -193,22 +198,22 @@ class RecipesViewModel(private val inApplication: Application):
             val rwlSize = rwSubList.size
             val firstToLast = rwSubList[0]
             rwSubList.forEachIndexed { index, recipe ->
-                if (index == rwlSize-1){
+                if (index == rwlSize - 1) {
                     updatedList.add(firstToLast)
                 } else {
-                    updatedList.add(rwSubList[index+1])
+                    updatedList.add(rwSubList[index + 1])
                 }
             }
         }
 
         if (downUpMovement) {
             val rwlSize = rwSubList.size
-            val lastToFirst = rwSubList[rwlSize-1]
+            val lastToFirst = rwSubList[rwlSize - 1]
             rwSubList.forEachIndexed { index, recipe ->
-                if (index == 0){
+                if (index == 0) {
                     updatedList.add(lastToFirst)
-                }else{
-                    updatedList.add(rwSubList[index-1])
+                } else {
+                    updatedList.add(rwSubList[index - 1])
                 }
             }
         }
@@ -222,7 +227,8 @@ class RecipesViewModel(private val inApplication: Application):
 
         // now, save new order in DB
         updatedList.forEachIndexed { index, rwRecipe ->
-            val rec = getRecipeById(inListIds[index]) ?: return false // get the current item from DB with this ID
+            val rec = getRecipeById(inListIds[index])
+                ?: return false // get the current item from DB with this ID
             val updatedRec = rwRecipe.copy(id = rec.id)
             recipesRepo.update(updatedRec)
 
@@ -243,7 +249,7 @@ class RecipesViewModel(private val inApplication: Application):
 
         val minIndex = min(dragFrom, dragTo)
         val maxIndex = max(dragFrom, dragTo)
-        val rwSubList = list.subList(minIndex, maxIndex+1)
+        val rwSubList = list.subList(minIndex, maxIndex + 1)
         val inListIds = rwSubList.map { it.id }.sorted() //order of IDs in db
 
         if (inListIds.size != rwSubList.size) return
@@ -254,22 +260,22 @@ class RecipesViewModel(private val inApplication: Application):
             val rwlSize = rwSubList.size
             val firstToLast = rwSubList[0]
             rwSubList.forEachIndexed { index, recipe ->
-                if (index == rwlSize-1){
+                if (index == rwlSize - 1) {
                     updatedList.add(firstToLast)
                 } else {
-                    updatedList.add(rwSubList[index+1])
+                    updatedList.add(rwSubList[index + 1])
                 }
             }
         }
 
         if (downUpMovement) {
             val rwlSize = rwSubList.size
-            val lastToFirst = rwSubList[rwlSize-1]
+            val lastToFirst = rwSubList[rwlSize - 1]
             rwSubList.forEachIndexed { index, recipe ->
-                if (index == 0){
+                if (index == 0) {
                     updatedList.add(lastToFirst)
-                }else{
-                    updatedList.add(rwSubList[index-1])
+                } else {
+                    updatedList.add(rwSubList[index - 1])
                 }
             }
         }
@@ -328,7 +334,7 @@ class RecipesViewModel(private val inApplication: Application):
 
         val stepsList = stepsAllData.value?.filter { it.recipeId == recId }
 
-        stepsList?.forEach{ step ->
+        stepsList?.forEach { step ->
             updateStep(step)
         }
 
@@ -405,7 +411,7 @@ class RecipesViewModel(private val inApplication: Application):
             bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, fos)
             fos.flush()
             fos.close()
-        }catch (e: IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
